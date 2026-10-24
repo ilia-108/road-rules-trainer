@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, useTransitio
 import { createPortal } from 'react-dom';
 import { LinearStatistics, ReleaseDetails } from './LinearStatistics';
 import { readRoute, useTrainingNavigation } from './navigation';
+import { PreferencesProvider, usePreferences, BilingualText, TrainingFrame } from './Preferences';
 
 type Answer = { letter: string; text: string; correct?: boolean };
 type Question = {
@@ -258,16 +259,6 @@ function isValidProgress(value: unknown, questionCount: number): value is SavedP
   );
 }
 
-function BilingualText({ text }: { text: string }) {
-  const [spanish = '', ...englishParts] = text.split('\n');
-  return (
-    <span className="bilingual">
-      <span lang="es">{spanish}</span>
-      <span lang="en">{englishParts.join(' ')}</span>
-    </span>
-  );
-}
-
 function HelpContent({ text }: { text: string }) {
   const blocks = text
     .replace(/\u00a0/g, ' ')
@@ -389,7 +380,7 @@ function QuestionHistoryDetail({ questionIndex, question, attempts, onClose }: {
           return (
             <div className={`${isCorrect ? 'correct' : ''} ${isSelected && !isCorrect ? 'selected-wrong' : ''}`} key={answer.letter}>
               <span className="question-history-letter">{answer.letter}</span>
-              <BilingualText text={answer.text} />
+              <BilingualText text={answer.text} answer />
               {(isCorrect || isSelected) && <em>{isCorrect ? isSelected ? 'Ваш ответ · верно' : 'Правильный ответ' : 'Ваш ответ'}</em>}
             </div>
           );
@@ -608,6 +599,8 @@ function MobileStatusBar({
 }
 
 function AccountMenu({ user, onLogout }: { user: AuthUser; onLogout: () => Promise<void> }) {
+  const { preferences, update } = usePreferences();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const menu = useRef<HTMLDivElement>(null);
@@ -629,13 +622,19 @@ function AccountMenu({ user, onLogout }: { user: AuthUser; onLogout: () => Promi
     setBusy(true);
     try { await onLogout(); } finally { setBusy(false); setOpen(false); }
   }
-  return <div className="account-menu-shell" ref={menu}>
+  return <><div className="account-menu-shell" ref={menu}>
     <ReleaseDetails />
     <button ref={trigger} type="button" className="account-menu-trigger" aria-label="Меню пользователя" aria-expanded={open} aria-controls="account-menu" onClick={() => setOpen(!open)}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
     </button>
-    {open && <section id="account-menu" className="account-menu-panel" aria-label="Аккаунт"><p>{user.email}</p><hr /><button type="button" onClick={() => { setOpen(false); if (readRoute().screen !== 'statistics') { window.history.pushState(null, '', '?screen=statistics'); window.dispatchEvent(new PopStateEvent('popstate')); } }}>Статистика</button><button type="button" disabled={busy} onClick={signOut}>{busy ? 'Выходим…' : 'Выйти'}</button></section>}
-  </div>;
+    {open && <section id="account-menu" className="account-menu-panel" aria-label="Аккаунт"><p>{user.email}</p><hr /><button type="button" onClick={() => { setOpen(false); if (readRoute().screen !== 'statistics') { window.history.pushState(null, '', '?screen=statistics'); window.dispatchEvent(new PopStateEvent('popstate')); } }}>Статистика</button><button type="button" onClick={() => { setOpen(false); setSettingsOpen(true); }}>Настройки</button><button type="button" disabled={busy} onClick={signOut}>{busy ? 'Выходим…' : 'Выйти'}</button></section>}
+  </div>{settingsOpen && <Modal eyebrow="Предпочтения" title="Настройки" className="settings-modal" onClose={() => setSettingsOpen(false)}>
+    <div className="settings-options">
+      <label><span><strong>Сворачивать верхнюю панель</strong><small>По умолчанию при открытии вопроса на мобильном</small></span><input type="checkbox" role="switch" checked={preferences.collapseMobileHeader} onChange={e => update('collapseMobileHeader', e.target.checked)} /></label>
+      <label><span><strong>Испанский текст вопроса</strong><small>Показывать на всех экранах</small></span><input type="checkbox" role="switch" checked={preferences.showSpanishQuestion} onChange={e => update('showSpanishQuestion', e.target.checked)} /></label>
+      <label><span><strong>Испанский текст ответов</strong><small>Показывать на всех экранах</small></span><input type="checkbox" role="switch" checked={preferences.showSpanishAnswers} onChange={e => update('showSpanishAnswers', e.target.checked)} /></label>
+    </div><p className="settings-note">Настройки сохраняются в этом браузере.</p>
+  </Modal>}</>;
 }
 
 function LoginScreen({ onAuthenticated }: { onAuthenticated: (user: AuthUser) => void }) {
@@ -1092,7 +1091,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
     : position + 1;
   const progress = Math.round(done / total * 100);
   const help = q.help[language] || q.help.en;
-  return <>
+  return <TrainingFrame>
     <button className="library-back topic-back" type="button" disabled={busy} onClick={onBack}>‹ Панель обучения</button>
     <main className="app-shell topic-shell">
       <header className="topbar topic-topbar">
@@ -1116,7 +1115,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
           <div className="question-heading-row"><h2><BilingualText text={q.question} /></h2></div>
           <div className="answer-scroll" ref={panel}><div className="answers">{q.answers.map((choice) => {
             const state = q.progress ? choice.letter === q.progress.correct_letter ? 'correct' : choice.letter === q.progress.selected_letter ? 'wrong' : 'muted' : '';
-            return <button type="button" className={`answer ${state}`} key={choice.letter} disabled={!!q.progress || busy} onClick={() => answer(choice.letter)}><span className="answer-letter">{choice.letter}</span><BilingualText text={choice.text} /></button>;
+            return <button type="button" className={`answer ${state}`} key={choice.letter} disabled={!!q.progress || busy} onClick={() => answer(choice.letter)}><span className="answer-letter">{choice.letter}</span><BilingualText text={choice.text} answer /></button>;
           })}</div>
           {error && <p role="alert" className="answer-error">{error}</p>}
 
@@ -1129,7 +1128,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
       </section>
     </main>
     {helpOpen && <Modal eyebrow={`${topic.title} · вопрос ${position + 1}`} title="Объяснение" onClose={() => setHelpOpen(false)}><div className="help-languages">{(['ru', 'es', 'en'] as HelpLanguage[]).map((lang) => <button key={lang} onClick={() => setLanguage(lang)} className={language === lang ? 'active' : ''}>{lang.toUpperCase()}</button>)}</div><HelpContent text={help || 'Объяснение отсутствует в источнике.'} /></Modal>}
-  </>;
+  </TrainingFrame>;
 }
 
 function readInitialTicket() { const route = readRoute(); return route.screen === 'ticket' ? route.id : undefined; }
@@ -1706,7 +1705,7 @@ function TrainerApp() {
     question.help;
 
   return (
-    <>
+    <TrainingFrame>
       {mobileStatusBar}
         <button className="library-back" type="button" onClick={() => setHome(true)}>‹ Панель обучения</button>
       <main className="app-shell">
@@ -1776,7 +1775,7 @@ function TrainerApp() {
                   disabled={answered || submittingAnswer}
                 >
                   <span className="answer-letter">{answer.letter}</span>
-                  <BilingualText text={answer.text} />
+                  <BilingualText text={answer.text} answer />
                 </button>
               );
             })}
@@ -1830,11 +1829,11 @@ function TrainerApp() {
         </Modal>
       )}
       {statisticsModal}
-    </>
+    </TrainingFrame>
   );
 }
 
-export default function App() {
+function AuthenticatedApp() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
 
@@ -1853,4 +1852,8 @@ export default function App() {
   if (checkingSession) return <PageLoader />;
   if (!user) return <LoginScreen onAuthenticated={setUser} />;
   return <><AccountMenu key={`account:${user.id}`} user={user} onLogout={logout} /><MigrationGate key={user.id} user={user} onLogout={logout} /></>;
+}
+
+export default function App() {
+  return <PreferencesProvider><AuthenticatedApp /></PreferencesProvider>;
 }

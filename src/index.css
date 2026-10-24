@@ -801,3 +801,32 @@ button { font:inherit; }
 .statistics-topic-scroll .collection-statistics-content { padding:6px 12px 12px 28px; }
 .collection-statistics-content table { border:1px solid #cbdce8; border-radius:8px; overflow:hidden; }
 .statistics-topic-scroll .collection-statistics-content thead th { position:static; }
+
+/* Display preferences apply consistently to training and answer history. */
+.bilingual.english-only [lang="en"] { color:inherit; font-size:1em; font-weight:inherit; }
+.training-page { display:contents; }
+.mobile-header-toggle { display:none; }
+.settings-options { display:grid; gap:0; }
+.settings-options label { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:18px 0; border-bottom:1px solid #dbe6ef; cursor:pointer; }
+.settings-options label>span { display:grid; gap:5px; }
+.settings-options strong { font-size:15px; }
+.settings-options small,.settings-note { color:var(--muted); font-size:13px; }
+.settings-options input { appearance:none; flex:none; width:42px; height:24px; border:1px solid #b1c4d4; border-radius:20px; background:#d6e0e9; cursor:pointer; position:relative; margin:0; }
+.settings-options input::after { content:''; position:absolute; top:3px; left:3px; width:16px; height:16px; background:white; border-radius:50%; box-shadow:0 1px 3px #172d4330; transition:transform .15s; }
+.settings-options input:checked { border-color:var(--green); background:var(--green); }
+.settings-options input:checked::after { transform:translateX(18px); }
+.settings-options input:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+@media(max-width:820px) {
+ .mobile-header-toggle { display:flex; align-items:center; justify-content:center; gap:5px; position:fixed; z-index:37; top:8px; left:50%; transform:translateX(-50%); height:24px; padding:2px 12px; border:1px solid #bfd5e7; border-radius:12px; background:#f3f9ff; color:var(--green-dark); font-size:11px; font-weight:650; cursor:pointer; }
+ .mobile-header-toggle svg { width:15px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+ .training-page .mobile-status-bar { display:none; }
+ .training-page>.library-back { top:8px; left:11px; max-width:calc(50% - 76px); padding:6px; font-size:10px; }
+ .training-page>.app-shell { padding-top:48px; grid-template-rows:auto auto minmax(0,1fr); }
+ .training-page .topbar { display:flex; flex-wrap:wrap; height:auto; min-height:0; gap:8px; margin-bottom:8px; }
+ .training-page .topbar .title-block { flex-basis:100%; }
+ .training-page .topbar .header-tools { width:100%; gap:6px; }
+ .training-page .topbar .ticket-menu-shell { flex:1; width:auto; }
+ .training-page .topbar .ticket-progress,.training-page .topbar .statistics-button { display:none; }
+ .training-page.mobile-header-collapsed>.library-back,.training-page.mobile-header-collapsed .topbar { display:none; }
+ .training-page.mobile-header-collapsed>.app-shell { padding-top:42px; grid-template-rows:auto minmax(0,1fr); }
+}
