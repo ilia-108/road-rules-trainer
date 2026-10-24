@@ -641,7 +641,6 @@ button { font:inherit; }
 .question-navigation { gap:16px; }
 .anchored-feedback { margin:0; padding:12px 16px; flex:none; }
 .feedback-actions { display:flex; align-items:center; gap:8px; flex:none; }
-.feedback-move { border:1px solid #b9cbd7; border-radius:8px; background:#ffffffa0; color:#385c72; padding:6px 9px; font-size:19px; cursor:pointer; }
 .visual-panel.has-feedback { display:flex; flex-direction:column; }
 .visual-panel.has-feedback .visual-media { position:relative; inset:auto; flex:1; margin:22px; min-height:0; }
 .visual-panel.has-feedback .anchored-feedback { margin:0 16px 16px; }

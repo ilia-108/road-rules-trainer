@@ -1,8 +1,6 @@
 name: Build and deploy
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -14,6 +12,8 @@ concurrency:
 
 jobs:
   deploy:
+    # Raven is retired; restoration requires an explicit opt-in and workflow re-enable.
+    if: ${{ vars.RAVEN_DEPLOY_ENABLED == 'true' }}
     runs-on: self-hosted
     timeout-minutes: 20
     env:

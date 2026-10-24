@@ -182,3 +182,18 @@ The authenticated `/api/statistics/linear?paged=1&offset=0` endpoint returns the
 `/api/statistics/topics` aggregates the same events by their recorded topic or source ticket. It supports `filter=errors|perfect|all`, `sort=wrong|correct`, `direction=desc|asc`, and `offset` (30 topic rows per page). Sorting compares percentages, with answer counts breaking ties; percentages and counts are displayed together. Source tickets are returned in the two `collections` groups, separately from subject-topic rows. Each group has independently sortable ticket rows. Topic rows expose their IDs for dashboard navigation. Optional `from` and `to` dates are inclusive UTC calendar days, and `days` lists available answer dates for the month/week calendar. Each query is scoped to the authenticated user. The two collapsible panels share the viewport equally; only their row areas scroll, and the table header remains pinned.
 
 Release highlights live in `backend/seed/releases.json`. Before a release, add an entry for the next patch version with `deployed_at: null` and concise interface-language highlights. After production passes its health check, the workflow records the actual UTC deployment timestamp and deployed commit, atomically publishes the metadata in the persistent data directory, and commits the release record with `[skip ci]`. The annotated version tag always points to the deployed application commit, not the subsequent metadata-only commit. Normal pushes are used; concurrent branch changes cause a safe push rejection rather than rewriting history. `/api/releases` serves the recorded history, with the embedded history as the initial fallback. The interface formats timestamps in the browser's local timezone.
+
+
+## Production on Kai (2026-10-24)
+
+Production is https://pdd.iliago.com/, container `pdd` on Kai, with the independent
+`pdd-data` volume. Run deployments from `/home/ilia/docker/pdd/deploy.sh`; this
+verifies an online SQLite backup before invoking Compose and checks health.
+Infrastructure configuration and the migration runbook are in the private infra
+repository under `deployments/kai/pdd`.
+
+The old Raven container is stopped with restart policy `no`; its database volume
+and backups are retained. Its GitHub deployment workflow is disabled, no longer
+listens to pushes, and additionally requires `RAVEN_DEPLOY_ENABLED=true` to run.
+Do not re-enable it or start the retired container without explicit authorization.
+The legacy workflow and Cloudflare route are retained for reference/recovery.
