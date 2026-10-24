@@ -1,32 +1,41 @@
-name: Build and deploy
+name: Build and deploy on Kai
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      verify_only:
+        description: Build and verify without replacing production
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 concurrency:
-  group: road-rules-trainer-production
+  group: road-rules-trainer-kai-production
   cancel-in-progress: false
 
 jobs:
   deploy:
-    # Raven is retired; restoration requires an explicit opt-in and workflow re-enable.
-    if: ${{ vars.RAVEN_DEPLOY_ENABLED == 'true' }}
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, x64, kai-pdd]
     timeout-minutes: 20
     env:
-      APP_NAME: road-rules-trainer
-      APP_PORT: ${{ vars.ROAD_RULES_PORT || '5050' }}
-      BIND_ADDRESS: ${{ vars.ROAD_RULES_BIND_ADDRESS || '127.0.0.1' }}
-      IMAGE_NAME: road-rules-trainer:${{ github.sha }}
-      DATA_VOLUME: road-rules-trainer-data
+      APP_DIRECTORY: /home/ilia/docker/pdd
+      IMAGE_NAME: pdd:${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Confirm dedicated Kai host
+        run: |
+          test "$(hostname -s)" = kai
+          test -f "$APP_DIRECTORY/compose.yml"
+          test -f "$APP_DIRECTORY/runtime.env"
+          test -x "$APP_DIRECTORY/deploy.sh"
 
       - name: Select release version
         shell: bash
@@ -35,82 +44,67 @@ jobs:
           VERSION="$(docker run --rm -i --env "BASE_VERSION=$BASE_VERSION" --env "RELEASE_TAGS=$(git tag --list 'v*')" --entrypoint node node:22-alpine --input-type=module - < scripts/next-release.mjs)"
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Build image
+      - name: Build image on Kai
         run: docker build --build-arg "APP_VERSION=$APP_VERSION" --build-arg "GIT_SHA=$GITHUB_SHA" --tag "$IMAGE_NAME" .
 
-      - name: Verify image
+      - name: Verify isolated image
         shell: bash
         run: |
-          docker rm --force "${APP_NAME}-check" 2>/dev/null || true
-          docker run --detach --name "${APP_NAME}-check" "$IMAGE_NAME"
-
-          for attempt in {1..20}; do
-            status="$(docker inspect --format='{{.State.Health.Status}}' "${APP_NAME}-check")"
+          docker rm --force --volumes pdd-image-check 2>/dev/null || true
+          trap 'docker rm --force --volumes pdd-image-check >/dev/null 2>&1 || true' EXIT
+          docker run --detach --name pdd-image-check "$IMAGE_NAME"
+          for attempt in {1..30}; do
+            status="$(docker inspect --format='{{.State.Health.Status}}' pdd-image-check)"
             if [ "$status" = healthy ]; then
-              docker rm --force "${APP_NAME}-check"
               exit 0
             fi
             if [ "$status" = unhealthy ]; then
-              docker logs "${APP_NAME}-check"
-              docker rm --force "${APP_NAME}-check"
+              docker logs pdd-image-check
               exit 1
             fi
-            sleep 1
+            sleep 2
           done
-
-          docker logs "${APP_NAME}-check"
-          docker rm --force "${APP_NAME}-check"
+          docker logs pdd-image-check
           exit 1
 
-      - name: Back up database and prune verified backups
+      - name: Back up current database and deploy
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.verify_only }}
         shell: bash
         run: |
-          docker run --rm -i --volume "${DATA_VOLUME}:/app/data" --env "RELEASE_ID=v${APP_VERSION}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" --entrypoint sh "$IMAGE_NAME" -s < scripts/backup-database.sh
-
-      - name: Replace production container
-        shell: bash
-        run: |
-          docker rm --force "$APP_NAME" 2>/dev/null || true
-          docker run \
-            --detach \
-            --restart unless-stopped \
-            --name "$APP_NAME" \
-            --publish "${BIND_ADDRESS}:${APP_PORT}:8080" \
-            --volume "${DATA_VOLUME}:/app/data" \
-            --env "SESSION_SECRET=${{ secrets.ROAD_RULES_SESSION_SECRET }}" \
-            --env "EMAIL_MODE=resend" \
-            --env "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" \
-            --env "EMAIL_FROM=${{ vars.ROAD_RULES_EMAIL_FROM || 'Road Rules Trainer <login@mail.domyshev.com>' }}" \
-            "$IMAGE_NAME"
-
-      - name: Verify deployment
-        shell: bash
-        run: |
-          for attempt in {1..20}; do
-            status="$(docker inspect --format='{{.State.Health.Status}}' "$APP_NAME")"
-            if [ "$status" = healthy ]; then
-              exit 0
-            fi
-            sleep 1
-          done
-
-          docker logs "$APP_NAME"
-          exit 1
+          cd "$APP_DIRECTORY"
+          mkdir -p config-backups
+          cp compose.yml "config-backups/compose-$(date -u +%Y%m%dT%H%M%SZ)-$GITHUB_SHA.yml"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os, re
+          path = Path('compose.yml')
+          updated, count = re.subn(r'(?m)^(\s+image:) .+$', lambda match: match.group(1) + ' ' + os.environ['IMAGE_NAME'], path.read_text())
+          assert count == 1, 'Expected exactly one PDD service image'
+          path.write_text(updated)
+          PY
+          # The installed script requires a verified online backup before replacement.
+          ./deploy.sh
 
       - name: Record successful release
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.verify_only }}
         shell: bash
         run: |
           docker run --rm -i --env "APP_VERSION=$APP_VERSION" --env "GITHUB_SHA=$GITHUB_SHA" --env "DEPLOYED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" --env "RELEASE_HISTORY=$(cat backend/seed/releases.json)" --entrypoint node node:22-alpine --input-type=module - < scripts/record-release.mjs > release-record.json
           cp release-record.json backend/seed/releases.json
-          docker exec -i "$APP_NAME" sh -c 'cat > /app/data/releases.json.tmp && mv /app/data/releases.json.tmp /app/data/releases.json' < release-record.json
+          docker exec -i pdd sh -c 'cat > /app/data/releases.json.tmp && mv /app/data/releases.json.tmp /app/data/releases.json' < release-record.json
 
-      - name: Tag verified deployment
+      - name: Tag verified Kai deployment
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.verify_only }}
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag --annotate "v$APP_VERSION" "$GITHUB_SHA" --message "Production release v$APP_VERSION"
+          git tag --annotate "v$APP_VERSION" "$GITHUB_SHA" --message "Kai production release v$APP_VERSION"
           git add backend/seed/releases.json
-          git commit --message "Record production release v$APP_VERSION [skip ci]"
+          git commit --message "Record Kai production release v$APP_VERSION [skip ci]"
           git push --atomic origin HEAD:main "refs/tags/v$APP_VERSION"
-          echo "Deployed v$APP_VERSION from $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Deployed on Kai: v$APP_VERSION from $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report verification-only run
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.verify_only }}
+        run: echo "Kai runner built and verified $GITHUB_SHA; production was not replaced." >> "$GITHUB_STEP_SUMMARY"

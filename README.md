@@ -193,7 +193,11 @@ Infrastructure configuration and the migration runbook are in the private infra
 repository under `deployments/kai/pdd`.
 
 The old Raven container is stopped with restart policy `no`; its database volume
-and backups are retained. Its GitHub deployment workflow is disabled, no longer
-listens to pushes, and additionally requires `RAVEN_DEPLOY_ENABLED=true` to run.
-Do not re-enable it or start the retired container without explicit authorization.
-The legacy workflow and Cloudflare route are retained for reference/recovery.
+and backups are retained. Never start it again without explicit authorization.
+The deployment workflow now runs exclusively on the repository-scoped `kai-pdd`
+runner, with a hostname check that rejects any other host. Pushes to main build
+and verify on Kai, then call the installed backup-first deployment script. A
+manual `verify_only` run tests the runner/build/health path without replacing
+production, creating a release tag or changing the current data volume.
+Runtime secrets stay in Kai's private `runtime.env`; the runner registration is
+scoped only to this repository. The old Cloudflare route remains for recovery.
