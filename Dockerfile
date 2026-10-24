@@ -27,7 +27,7 @@ RUN apk add --no-cache ca-certificates sqlite \
 
 WORKDIR /app
 COPY --from=backend /road-rules-server /usr/local/bin/road-rules-server
-COPY --from=frontend /src/dist /app/web
+COPY --from=frontend --chown=app:app /src/dist /app/web
 
 ARG APP_VERSION=dev
 ARG GIT_SHA=unknown

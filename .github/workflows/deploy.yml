@@ -56,6 +56,8 @@ jobs:
           for attempt in {1..30}; do
             status="$(docker inspect --format='{{.State.Health.Status}}' pdd-image-check)"
             if [ "$status" = healthy ]; then
+              docker exec pdd-image-check sh -c 'test -r /app/web/library.json && wget --quiet --output-document=/dev/null http://127.0.0.1:8080/library.json'
+              docker exec pdd-image-check sh -c 'image=$(find /app/web/tests -type f | head -n 1); test -n "$image" && test -r "$image"'
               exit 0
             fi
             if [ "$status" = unhealthy ]; then
