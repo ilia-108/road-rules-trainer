@@ -835,3 +835,7 @@ button { font:inherit; }
 .calendar-custom-range>button { grid-column:1/-1; padding:7px; border-radius:6px; background:#e2effa; font-size:12px; font-weight:700; }
 .calendar-custom-range>button:disabled { opacity:.45; cursor:default; }
 @media (max-width:600px) { .statistics-panel-heading { flex-wrap:wrap; gap:6px; } .question-statistics-controls { gap:4px; margin-left:auto; } .question-statistics-controls .calendar-trigger { max-width:130px; } }
+
+.statistics-tickets-panel.expanded.content-sized { flex:0 1 auto; max-height:45%; }
+.statistics-tickets-panel.content-sized .statistics-scroll { flex:0 1 auto; }
+.statistics-total { font-variant-numeric:tabular-nums; color:var(--ink); }
