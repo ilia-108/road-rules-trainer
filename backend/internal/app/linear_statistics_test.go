@@ -152,6 +152,24 @@ func TestStatisticsPaginationAndTopicFilters(t *testing.T) {
 			t.Fatal("overlapping pages")
 		}
 	}
+	// Local calendar boundaries are sent as exact instants. Totals and pagination
+	// must describe only the filtered answers, including a partially selected day.
+	get("/api/statistics/linear?paged=1&limit=30&from=2026-10-01T12:10:00Z&to=2026-10-02T12:11:00Z", &page)
+	if page.Total != 31 || page.Correct != 14 || len(page.Events) != 30 || !page.More {
+		t.Fatalf("filtered first page and totals: %+v", page)
+	}
+	get("/api/statistics/linear?paged=1&limit=30&offset=30&from=2026-10-01T12:10:00Z&to=2026-10-02T12:11:00Z", &page)
+	if page.Total != 31 || page.Correct != 14 || len(page.Events) != 1 || page.More {
+		t.Fatalf("filtered last page and totals: %+v", page)
+	}
+	get("/api/statistics/linear?paged=1&from=2026-10-01T14:00:00%2B02:00&to=2026-10-01T14:01:00%2B02:00", &page)
+	if page.Total != 1 || page.Correct != 1 || len(page.Events) != 1 || page.Events[0].At != "2026-10-01T12:00:00Z" {
+		t.Fatalf("inclusive start, exclusive end and timezone: %+v", page)
+	}
+	get("/api/statistics/linear?paged=1&from=2026-11-01T00:00:00Z&to=2026-11-02T00:00:00Z", &page)
+	if page.Total != 0 || page.Correct != 0 || len(page.Events) != 0 || page.More {
+		t.Fatalf("empty filtered history: %+v", page)
+	}
 	var topics struct {
 		Rows  []statisticsTopicRow `json:"rows"`
 		Total int                  `json:"total"`
@@ -178,11 +196,15 @@ func TestStatisticsPaginationAndTopicFilters(t *testing.T) {
 	if topics.Total != 1 || topics.Rows[0].Correct != 10 || topics.Rows[0].Wrong != 20 {
 		t.Fatalf("calendar range: %+v", topics)
 	}
+	get("/api/statistics/topics?filter=all&from=2026-10-01T14:00:00%2B02:00&to=2026-10-01T14:01:00%2B02:00", &topics)
+	if topics.Total != 1 || topics.Rows[0].Correct != 1 || topics.Rows[0].Wrong != 0 {
+		t.Fatalf("topic timezone boundaries: %+v", topics)
+	}
 	get("/api/statistics/topics?filter=all&offset=1", &topics)
 	if len(topics.Rows) != 1 || topics.More {
 		t.Fatalf("topic pagination: %+v", topics)
 	}
-	for _, url := range []string{"/api/statistics/linear?paged=1&offset=-1", "/api/statistics/topics?from=no", "/api/statistics/topics?sort=no", "/api/statistics/topics?filter=no"} {
+	for _, url := range []string{"/api/statistics/linear?paged=1&offset=-1", "/api/statistics/linear?paged=1&from=no", "/api/statistics/linear?paged=1&to=2026-02-30", "/api/statistics/linear?paged=1&from=2026-10-02T00:00:00Z&to=2026-10-01T00:00:00Z", "/api/statistics/topics?from=no", "/api/statistics/topics?sort=no", "/api/statistics/topics?filter=no"} {
 		if request(t, app.Handler(), "GET", url, "", cookie).Code != 422 {
 			t.Fatalf("invalid query accepted: %s", url)
 		}
@@ -218,7 +240,7 @@ func TestStatisticsPercentageSortingAndCollections(t *testing.T) {
 		if _, err = app.db.Exec(`INSERT INTO attempts VALUES(?,NULL,?,?,'full',1,'2026-10-01T00:00:00Z',NULL)`, id, uid, testID); err != nil {
 			t.Fatal(err)
 		}
-		if _, err = app.db.Exec(`INSERT INTO attempt_answers VALUES(?,?,?,?,'2026-10-01T01:00:00Z')`, id, questionID, letter, i == 0); err != nil {
+		if _, err = app.db.Exec(`INSERT INTO attempt_answers VALUES(?,?,?,?,?)`, id, questionID, letter, i == 0, fmt.Sprintf("2026-10-%02dT01:00:00Z", i+1)); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -235,5 +257,52 @@ func TestStatisticsPercentageSortingAndCollections(t *testing.T) {
 	}
 	if result.Collections[0].ID != "thematic" || result.Collections[0].Correct != 1 || result.Collections[1].ID != "exam" || result.Collections[1].Wrong != 1 || len(result.Collections[0].Rows) != 1 || len(result.Collections[1].Rows) != 1 {
 		t.Fatal(response.Body.String())
+	}
+}
+
+func TestTicketStatisticsPeriodExcludesTopics(t *testing.T) {
+	app, sender := newTestApp(t)
+	uid, cookie := signInProgressUser(t, app, sender, "ticket-period@example.com")
+	var testID, questionID int
+	var letter string
+	if err := app.db.QueryRow(`SELECT q.test_id,q.id,a.letter FROM questions q JOIN answers a ON a.question_id=q.id WHERE a.correct=1 LIMIT 1`).Scan(&testID, &questionID, &letter); err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 2; i++ {
+		id := fmt.Sprintf("ticket-period-%d", i)
+		if _, err := app.db.Exec(`INSERT INTO attempts VALUES(?,NULL,?,?,'full',1,'2026-10-01T00:00:00Z',NULL)`, id, uid, testID); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := app.db.Exec(`INSERT INTO attempt_answers VALUES(?,?,?,?,?)`, id, questionID, letter, i == 0, fmt.Sprintf("2026-10-%02dT01:00:00Z", i+1)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, test := range []struct {
+		query          string
+		correct, wrong int
+	}{
+		{"", 1, 1},
+		{"&from=2026-10-01T00:00:00Z&to=2026-10-02T00:00:00Z", 1, 0},
+		{"&from=2026-10-02T00:00:00Z&to=2026-10-03T00:00:00Z", 0, 1},
+		{"&from=2026-11-01T00:00:00Z&to=2026-11-02T00:00:00Z", 0, 0},
+	} {
+		response := request(t, app.Handler(), "GET", "/api/statistics/topics?scope=tickets"+test.query, "", cookie)
+		var result struct {
+			Rows        []statisticsTopicRow   `json:"rows"`
+			Collections []statisticsCollection `json:"collections"`
+			Total       int                    `json:"total"`
+			More        bool                   `json:"has_more"`
+		}
+		if response.Code != 200 || json.Unmarshal(response.Body.Bytes(), &result) != nil {
+			t.Fatal(response.Body.String())
+		}
+		correct, wrong := 0, 0
+		for _, collection := range result.Collections {
+			correct += collection.Correct
+			wrong += collection.Wrong
+		}
+		if correct != test.correct || wrong != test.wrong || len(result.Rows) != 0 || result.Total != 0 || result.More {
+			t.Fatalf("%s: %s", test.query, response.Body.String())
+		}
 	}
 }

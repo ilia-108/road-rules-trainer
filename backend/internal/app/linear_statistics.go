@@ -66,8 +66,32 @@ func (app *App) linearStatistics(w http.ResponseWriter, r *http.Request) {
 		}
 		limit = n
 	}
+	where := " WHERE user_id=?"
 	uid := r.Context().Value(userContextKey).(user).ID
-	rows, err := app.db.Query(statisticsEvents+` SELECT id,content_id,selected_text,correct,answered_at,topic_id,test_id,mode FROM events WHERE user_id=? ORDER BY julianday(answered_at) DESC,answered_at DESC,id DESC LIMIT ? OFFSET ?`, uid, limit, offset)
+	args := []any{uid}
+	var from, to time.Time
+	for _, key := range []string{"from", "to"} {
+		if raw := r.URL.Query().Get(key); raw != "" {
+			bound, err := time.Parse(time.RFC3339, raw)
+			if err != nil {
+				app.writeError(w, 422, "Некорректный период")
+				return
+			}
+			if key == "from" {
+				from = bound
+				where += " AND julianday(answered_at)>=julianday(?)"
+			} else {
+				to = bound
+				where += " AND julianday(answered_at)<julianday(?)"
+			}
+			args = append(args, bound.UTC().Format(time.RFC3339))
+		}
+	}
+	if !from.IsZero() && !to.IsZero() && !from.Before(to) {
+		app.writeError(w, 422, "Некорректный период")
+		return
+	}
+	rows, err := app.db.Query(statisticsEvents+` SELECT id,content_id,selected_text,correct,answered_at,topic_id,test_id,mode FROM events`+where+` ORDER BY julianday(answered_at) DESC,answered_at DESC,id DESC LIMIT ? OFFSET ?`, append(append([]any{}, args...), limit, offset)...)
 	if err != nil {
 		app.writeError(w, 500, "Не удалось загрузить историю")
 		return
@@ -138,7 +162,7 @@ func (app *App) linearStatistics(w http.ResponseWriter, r *http.Request) {
 	}
 	if paged {
 		var total, correct int
-		if err := app.db.QueryRow(statisticsEvents+` SELECT count(*),COALESCE(sum(correct),0) FROM events WHERE user_id=?`, uid).Scan(&total, &correct); err != nil {
+		if err := app.db.QueryRow(statisticsEvents+` SELECT count(*),COALESCE(sum(correct),0) FROM events`+where, args...).Scan(&total, &correct); err != nil {
 			app.writeError(w, 500, "Не удалось загрузить итоги")
 			return
 		}
@@ -226,21 +250,34 @@ func (app *App) topicStatistics(w http.ResponseWriter, r *http.Request) {
 	uid := r.Context().Value(userContextKey).(user).ID
 	where := " WHERE user_id=?"
 	args := []any{uid}
+	var from, to time.Time
 	for _, key := range []string{"from", "to"} {
 		if raw := r.URL.Query().Get(key); raw != "" {
-			day, err := time.Parse("2006-01-02", raw)
+			bound, err := time.Parse(time.RFC3339, raw)
+			if err != nil {
+				// Older clients use inclusive UTC calendar dates.
+				bound, err = time.Parse("2006-01-02", raw)
+				if err == nil && key == "to" {
+					bound = bound.AddDate(0, 0, 1)
+				}
+			}
 			if err != nil {
 				app.writeError(w, 422, "Некорректная дата")
 				return
 			}
 			if key == "from" {
+				from = bound
 				where += " AND julianday(answered_at)>=julianday(?)"
-				args = append(args, day.Format(time.RFC3339))
 			} else {
+				to = bound
 				where += " AND julianday(answered_at)<julianday(?)"
-				args = append(args, day.AddDate(0, 0, 1).Format(time.RFC3339))
 			}
+			args = append(args, bound.UTC().Format(time.RFC3339))
 		}
+	}
+	if !from.IsZero() && !to.IsZero() && !from.Before(to) {
+		app.writeError(w, 422, "Некорректный период")
+		return
 	}
 	var library topicLibrary
 	data, err := seed.Files.ReadFile("library.json")
@@ -304,6 +341,9 @@ func (app *App) topicStatistics(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	if r.URL.Query().Get("scope") == "tickets" {
+		result = []statisticsTopicRow{}
+	}
 	total := len(result)
 	start := min(offset, total)
 	end := min(start+30, total)
