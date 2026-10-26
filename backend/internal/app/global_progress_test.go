@@ -175,3 +175,51 @@ func TestHistoricalRunSurvivesRemovedMembership(t *testing.T) {
 		t.Fatalf("historical membership lost: %v %v", historical, err)
 	}
 }
+
+func TestTopicContinuationMatchesTrainerProgress(t *testing.T) {
+	app, sender := newTestApp(t)
+	uid, cookie := signInProgressUser(t, app, sender, "continue-topic@example.com")
+	const topicID = "routine.drugs"
+	_, members, _, err := topicMembers(topicID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Noncontiguous inherited answers must be skipped even when the run has no
+	// direct answer records for those questions.
+	for _, index := range []int{0, 1, 3} {
+		putLegacyKnowledge(t, app, uid, "previous-topic", members[index], true, "2026-10-01T10:00:00Z")
+	}
+	assertMatch := func() {
+		t.Helper()
+		overview := request(t, app.Handler(), "GET", "/api/topics/progress", "", cookie)
+		var summaries map[string]struct {
+			Remaining int `json:"remaining"`
+			Next      int `json:"next_question"`
+		}
+		if overview.Code != 200 || json.Unmarshal(overview.Body.Bytes(), &summaries) != nil {
+			t.Fatal(overview.Body.String())
+		}
+		response := request(t, app.Handler(), "GET", "/api/topics/"+topicID, "", cookie)
+		var topic struct {
+			Questions []topicQuestion `json:"questions"`
+		}
+		if response.Code != 200 || json.Unmarshal(response.Body.Bytes(), &topic) != nil {
+			t.Fatal(response.Body.String())
+		}
+		remaining, next := 0, 0
+		for index, q := range topic.Questions {
+			if q.Progress == nil {
+				remaining++
+				if next == 0 {
+					next = index + 1
+				}
+			}
+		}
+		if remaining != summaries[topicID].Remaining || next != summaries[topicID].Next {
+			t.Fatalf("overview differs from trainer: remaining %d next %d, summary %+v", remaining, next, summaries[topicID])
+		}
+	}
+	assertMatch()
+	putLegacyKnowledge(t, app, uid, "another-topic", members[2], false, "2026-10-02T10:00:00Z")
+	assertMatch()
+}

@@ -750,7 +750,7 @@ type LibraryData = { nodes: TopicNode[]; questions: LibraryQuestion[] };
 
 type TopicRun = { inherited?: number; kind: 'full' | 'new'; id: number; total: number; answered: number; correct: number; wrong: number; started_at: string; completed_at: string | null; review?: TopicRun };
 type TopicLaunch = { reviewParent?: number; newQuestions?: boolean; runId?: number };
-type TopicSummary = { repeat_in_progress?: boolean; new_count: number; new_question_ids: string[]; question_runs: Record<string, number>; completed: boolean; runs: TopicRun[]; total: number; answered: number; correct: number; wrong: number; next_question: number; results: Record<string, boolean> };
+type TopicSummary = { remaining: number; repeat_in_progress?: boolean; new_count: number; new_question_ids: string[]; question_runs: Record<string, number>; completed: boolean; runs: TopicRun[]; total: number; answered: number; correct: number; wrong: number; next_question: number; results: Record<string, boolean> };
 function questionCount(count: number) {
   const form = new Intl.PluralRules('ru').select(count);
   return `${count} ${form === 'one' ? 'вопрос' : form === 'few' ? 'вопроса' : 'вопросов'}`;
@@ -928,14 +928,14 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
         if (stats?.new_count) { openTopic(node.id, undefined, { newQuestions: true }); return; }
         const fullRun = stats?.runs.find((run) => run.kind === 'full');
         const failedRun = stats?.wrong ? stats.runs.find((run) => run.id >= (fullRun?.id ?? 0) && run.completed_at && run.wrong > 0) : undefined;
-        if (stats?.repeat_in_progress) { openTopic(node.id); return; }
+        if (stats?.remaining) { openTopic(node.id); return; }
         if (stats?.completed) {
           if (failedRun) openTopic(node.id, undefined, { reviewParent: failedRun.id });
           else void repeatTopic(node.id);
         } else openTopic(node.id);
-      }}>{stats?.new_count ? 'Пройти новые' : stats?.repeat_in_progress ? 'Продолжить тему' : stats?.answered ? stats.completed ? stats.wrong > 0 ? 'Повторить вопросы с ошибками' : 'Пройти тему снова' : 'Продолжить тему' : 'Начать тему'}{!stats?.new_count && stats && (stats.answered > 0 || stats.repeat_in_progress) && (!stats.completed || stats.repeat_in_progress) && <small>с вопроса {stats.next_question}</small>}</button>{!!stats?.new_count && <span className="topic-new-badge">New<small>{questionCount(stats.new_count)}</small></span>}</div>
+      }}>{stats?.new_count ? 'Пройти новые' : stats?.remaining ? 'Продолжить тему' : stats?.completed ? stats.wrong > 0 ? 'Повторить вопросы с ошибками' : 'Пройти тему снова' : 'Начать тему'}{!stats?.new_count && !!stats?.remaining && <small>с вопроса {stats.next_question}</small>}</button>{!!stats?.new_count && <span className="topic-new-badge">New<small>{questionCount(stats.new_count)}</small></span>}</div>
 
-      {!!stats?.new_count && stats.runs.some((run) => run.kind === 'full' && !run.completed_at) && <button type="button" className="repeat-full-topic continue-main" title={(() => { const run = stats.runs.find((item) => item.kind === 'full' && !item.completed_at); return run ? `Пройдено: ${run.answered} · Осталось: ${Math.max(0, run.total - run.answered)} (без новых вопросов)` : undefined; })()} onClick={() => openTopic(node.id)}>Продолжить основное прохождение</button>}
+      {!!stats?.new_count && stats.remaining > 0 && <button type="button" className="repeat-full-topic continue-main" title={`Осталось: ${stats.remaining} (без новых вопросов)`} onClick={() => openTopic(node.id)}>Продолжить основное прохождение <small>с вопроса {stats.next_question}</small></button>}
       {!stats?.new_count && stats?.completed && stats.wrong > 0 && <button className="repeat-full-topic" type="button" onClick={() => void repeatTopic(node.id)}>Пройти всю тему снова</button>}</div>}{children.map(topic)}{!children.length && questionList(own, true, node)}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
     </details>;
   }
@@ -1075,15 +1075,13 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   const q = topic?.questions[position];
   if (!topic || !q) return error ? <main className="loading error-message"><p role="alert">{error}</p><button className="secondary" onClick={onBack}>Панель обучения</button></main> : <PageLoader />;
   const total = topic.questions.length;
-  const lastQuestion = position === total - 1;
   const done = topic.questions.filter((item) => item.progress).length;
   const correct = topic.questions.filter((item) => item.progress?.correct).length;
   const filteredRun = !!reviewParent || topic.kind === 'new';
-  const finishReady = filteredRun ? done === total : lastQuestion;
+  const finishReady = done === total;
   const nextUnanswered = topic.questions.findIndex((item, index) => index > position && !item.progress);
-  const nextPosition = filteredRun
-    ? nextUnanswered >= 0 ? nextUnanswered : topic.questions.findIndex((item) => !item.progress)
-    : position + 1;
+  const nextPosition = nextUnanswered >= 0 ? nextUnanswered : topic.questions.findIndex((item) => !item.progress);
+  const previousPosition = topic.questions.reduce((previous, item, index) => index < position && !item.progress ? index : previous, -1);
   const progress = Math.round(done / total * 100);
   const help = q.help[language] || q.help.en;
   return <TrainingFrame>
@@ -1117,7 +1115,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
           {done === total && <p className="topic-completed">{reviewParent ? 'Работа над ошибками завершена' : topic.kind === 'new' ? 'Новые вопросы пройдены' : 'Тема пройдена'}. Верно: {correct} из {total}. Можно вернуться к списку тем.</p>}
           </div>
           </div>
-          <footer className="question-navigation">{q.progress && <AnswerResult correct={q.progress.correct} letter={q.progress.correct_letter} onHelp={() => setHelpOpen(true)} />}<div className="controls topic-controls"><button className="secondary" disabled={position === 0 || busy} onClick={() => goTo(position - 1)}>← Предыдущий</button><NextQuestionButton key={q.id} label={finishReady ? reviewParent ? 'Завершить работу над ошибками' : topic.kind === 'new' ? 'Завершить новые вопросы' : 'Завершить тему' : 'Следующий вопрос →'} disabled={busy || ((filteredRun || lastQuestion) && !q.progress)} imageUrl={topic.questions[nextPosition]?.image_url} onNext={() => finishReady ? onFinish(q.id) : goTo(nextPosition)} /></div>
+          <footer className="question-navigation">{q.progress && <AnswerResult correct={q.progress.correct} letter={q.progress.correct_letter} onHelp={() => setHelpOpen(true)} />}<div className="controls topic-controls"><button className="secondary" disabled={previousPosition < 0 || busy} onClick={() => goTo(previousPosition)}>← Предыдущий</button><NextQuestionButton key={q.id} label={finishReady ? reviewParent ? 'Завершить работу над ошибками' : topic.kind === 'new' ? 'Завершить новые вопросы' : 'Завершить тему' : 'Следующий вопрос →'} disabled={busy || !q.progress} imageUrl={topic.questions[nextPosition]?.image_url} onNext={() => finishReady ? onFinish(q.id) : goTo(nextPosition)} /></div>
           <button className="return-link" type="button" disabled={busy} onClick={onBack}><span className="return-arrow" aria-hidden="true">↩</span><span className="return-text">Вернуться</span></button></footer>
         </div>
       </section>

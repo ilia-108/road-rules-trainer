@@ -611,7 +611,7 @@ button { font:inherit; }
 
 /* Section navigation shares the library hierarchy and current progress. */
 .library-section > summary > .library-node-title { font-size:18px; }
-.library-branch:not(.library-section) > .library-children { margin-top:-4px; }
+.library-branch:not(.library-section) > .library-children { margin-top:4px; }
 .topic-list-number,.topic-menu-question>b { display:inline-grid; place-items:center; min-width:23px; height:23px; border:1px solid #8bb6d9; border-radius:7px; color:var(--green-dark); background:transparent; font-size:12px; }
 .question-number { border:1px solid #a6bbc9; background:transparent; box-shadow:none; }
 .section-heading { font-size:15px; }

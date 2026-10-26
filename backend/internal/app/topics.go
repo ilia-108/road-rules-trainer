@@ -456,6 +456,7 @@ func (app *App) topicSummaries(w http.ResponseWriter, r *http.Request) {
 		Correct          int               `json:"correct"`
 		Wrong            int               `json:"wrong"`
 		NextQuestion     int               `json:"next_question"`
+		Remaining        int               `json:"remaining"`
 		Results          map[string]bool   `json:"results"`
 		Runs             []topicRunSummary `json:"runs"`
 		NewCount         int               `json:"new_count"`
@@ -550,42 +551,59 @@ func (app *App) topicSummaries(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		repeatAnswered := map[string]bool{}
-		if item.RepeatInProgress {
-			answeredRows, e := app.db.Query(`SELECT content_id FROM topic_run_answers WHERE run_id=?`, fullID)
+		answered := map[string]bool{}
+		baseline := map[string]bool{}
+		if fullID > 0 {
+			progressRows, e := app.db.Query(`SELECT m.content_id,EXISTS(SELECT 1 FROM topic_run_progress p WHERE p.run_id=m.run_id AND p.content_id=m.content_id) FROM topic_run_members m WHERE m.run_id=?`, fullID)
 			if e != nil {
 				app.serverError(w, e)
 				return
 			}
-			for answeredRows.Next() {
+			for progressRows.Next() {
 				var content string
-				if e = answeredRows.Scan(&content); e != nil {
-					answeredRows.Close()
+				var done bool
+				if e = progressRows.Scan(&content, &done); e != nil {
+					progressRows.Close()
 					app.serverError(w, e)
 					return
 				}
-				repeatAnswered[content] = true
+				baseline[content] = true
+				answered[content] = done
 			}
-			e = answeredRows.Err()
-			answeredRows.Close()
+			e = progressRows.Err()
+			progressRows.Close()
 			if e != nil {
 				app.serverError(w, e)
 				return
 			}
+			// Use exactly the same frozen membership and order as the trainer.
+			frozen, _, e := app.runMembers(current.ID, id, fullID, refsByTopic[id])
+			if e != nil {
+				app.serverError(w, e)
+				return
+			}
+			ids = ids[:0]
+			for _, ref := range frozen {
+				ids = append(ids, ref.CanonicalID)
+			}
+		} else {
+			for content := range item.Results {
+				answered[content] = true
+			}
 		}
-		number := 0
-		for _, content := range ids {
-			if fullID > 0 && item.QuestionRuns[content] != fullID {
+		newIDs := map[string]bool{}
+		for _, content := range item.NewQuestionIDs {
+			newIDs[content] = true
+		}
+		for index, content := range ids {
+			if newIDs[content] || (fullID > 0 && !baseline[content]) {
 				continue
 			}
-			number++
-			_, answered := item.Results[content]
-			if item.RepeatInProgress {
-				answered = repeatAnswered[content]
-			}
-			if !answered {
-				item.NextQuestion = number
-				break
+			if !answered[content] {
+				item.Remaining++
+				if item.NextQuestion == 0 {
+					item.NextQuestion = index + 1
+				}
 			}
 		}
 	}

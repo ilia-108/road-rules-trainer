@@ -57,6 +57,7 @@ func TestAddedQuestionsGetSeparateRunsAndReopenTopic(t *testing.T) {
 		}
 	}
 	type state struct {
+		Remaining int               `json:"remaining"`
 		NewCount  int               `json:"new_count"`
 		NewIDs    []string          `json:"new_question_ids"`
 		Completed bool              `json:"completed"`
@@ -76,7 +77,7 @@ func TestAddedQuestionsGetSeparateRunsAndReopenTopic(t *testing.T) {
 		return all[topicID]
 	}
 	stats := summary()
-	if stats.NewCount != 2 || stats.Completed || stats.Answered != len(baseline) || len(stats.Runs) != 1 || stats.Runs[0].Total != len(baseline) {
+	if stats.Remaining != 0 || stats.NewCount != 2 || stats.Completed || stats.Answered != len(baseline) || len(stats.Runs) != 1 || stats.Runs[0].Total != len(baseline) {
 		t.Fatalf("topic was not reopened: %+v", stats)
 	}
 	// A newly tagged duplicate source of existing canonical content is already in the baseline.
