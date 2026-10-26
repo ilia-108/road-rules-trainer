@@ -839,3 +839,19 @@ button { font:inherit; }
 .statistics-tickets-panel.expanded.content-sized { flex:0 1 auto; max-height:45%; }
 .statistics-tickets-panel.content-sized .statistics-scroll { flex:0 1 auto; }
 .statistics-total { font-variant-numeric:tabular-nums; color:var(--ink); }
+
+.library-search { position:relative; }
+.library-search-input { position:relative; }
+.library-intro .library-search-input>input { padding-right:48px; width:100%; }
+.search-options-trigger { position:absolute; right:8px; top:50%; transform:translateY(-50%); display:grid; place-items:center; width:32px; height:30px; border:0; border-radius:6px; color:#366688; background:transparent; cursor:pointer; }
+.search-options-trigger:hover { background:#e0edf8; }
+.search-options-trigger svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; }
+.search-options-popover { position:absolute; right:0; top:calc(100% + 6px); z-index:95; width:250px; max-width:calc(100vw - 40px); padding:16px; border:1px solid #c1d5e4; border-radius:12px; background:white; box-shadow:0 8px 24px #17364d33; }
+.search-options-popover h3 { margin:12px 0 6px; font-size:12px; color:#677f90; }
+.search-options-popover label { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:14px; }
+.library-intro .search-options-popover input { width:auto; margin:0; accent-color:#1975bd; }
+.search-navigation { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:12px; color:#315c7c; }
+.search-navigation button { border:1px solid #c1d5e4; border-radius:5px; background:white; color:inherit; padding:2px 8px; cursor:pointer; }
+.search-navigation button:disabled { opacity:.4; }
+.library-tree mark { color:inherit; background:#ffe79b; border-radius:2px; }
+.library-tree .search-current mark { background:#ffbf47; outline:1px solid #d69418; }

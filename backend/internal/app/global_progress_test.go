@@ -223,3 +223,62 @@ func TestTopicContinuationMatchesTrainerProgress(t *testing.T) {
 	putLegacyKnowledge(t, app, uid, "another-topic", members[2], false, "2026-10-02T10:00:00Z")
 	assertMatch()
 }
+
+func TestTopicNumbersStayAlignedWhenFrozenRunOmitsKnownQuestion(t *testing.T) {
+	app, sender := newTestApp(t)
+	uid, cookie := signInProgressUser(t, app, sender, "numbering@example.com")
+	const topicID = "routine.drugs"
+	_, members, _, err := topicMembers(topicID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	baseline := append(append([]topicReference{}, members[:1]...), members[2:]...)
+	tx, err := app.db.Begin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := tx.Exec(`INSERT INTO topic_runs(user_id,topic_id,total,started_at) VALUES(?,?,?,'2026-10-01T00:00:00Z')`, uid, topicID, len(baseline))
+	if err != nil {
+		t.Fatal(err)
+	}
+	id, _ := result.LastInsertId()
+	if err = saveRunMembers(tx, id, baseline); err != nil {
+		t.Fatal(err)
+	}
+	if err = tx.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	for _, ref := range members[:3] {
+		putLegacyKnowledge(t, app, uid, "other-topic", ref, true, "2026-10-02T00:00:00Z")
+	}
+	res := request(t, app.Handler(), "GET", "/api/topics/progress", "", cookie)
+	var summaries map[string]struct {
+		Next int `json:"next_question"`
+		New  int `json:"new_count"`
+	}
+	if res.Code != 200 || json.Unmarshal(res.Body.Bytes(), &summaries) != nil {
+		t.Fatal(res.Body.String())
+	}
+	if summaries[topicID].Next != 4 || summaries[topicID].New != 0 {
+		t.Fatalf("dashboard must say question 4: %s", res.Body.String())
+	}
+	res = request(t, app.Handler(), "GET", "/api/topics/"+topicID, "", cookie)
+	var topic struct {
+		Questions []topicQuestion `json:"questions"`
+		Total     int             `json:"numbering_total"`
+	}
+	if res.Code != 200 || json.Unmarshal(res.Body.Bytes(), &topic) != nil {
+		t.Fatal(res.Body.String())
+	}
+	for _, question := range topic.Questions {
+		if question.Progress == nil {
+			if question.Number != 4 || question.ID != members[3].CanonicalID {
+				t.Fatalf("trainer must open question 4: %+v", question)
+			}
+			break
+		}
+	}
+	if topic.Total != len(members) {
+		t.Fatalf("numbering total %d", topic.Total)
+	}
+}

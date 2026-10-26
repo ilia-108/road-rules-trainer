@@ -148,6 +148,10 @@ func (app *App) topic(w http.ResponseWriter, r *http.Request) {
 		app.writeError(w, http.StatusNotFound, "Подтема не найдена")
 		return
 	}
+	numbers := map[string]int{}
+	for index, ref := range members {
+		numbers[ref.CanonicalID] = index + 1
+	}
 	current := r.Context().Value(userContextKey).(user)
 	reviewID, runID := int64(0), int64(0)
 	kind := "full"
@@ -182,6 +186,12 @@ func (app *App) topic(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	if reviewID > 0 || kind == "new" {
+		numbers = map[string]int{}
+		for index, ref := range members {
+			numbers[ref.CanonicalID] = index + 1
+		}
+	}
 	if reviewID == 0 {
 		tx, e := app.db.Begin()
 		if e != nil {
@@ -199,13 +209,17 @@ func (app *App) topic(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	questions := make([]topicQuestion, 0, len(members))
-	for i, ref := range members {
+	for _, ref := range members {
 		q, err := app.loadTopicQuestion(ref)
 		if err != nil {
 			app.serverError(w, err)
 			return
 		}
-		q.Number = i + 1
+		q.Number = numbers[ref.CanonicalID]
+		if q.Number == 0 {
+			q.Number = len(numbers) + 1
+			numbers[ref.CanonicalID] = q.Number
+		}
 		for _, source := range all {
 			if source.Verified && source.CanonicalID == q.ID {
 				q.Sources = append(q.Sources, source)
@@ -226,7 +240,7 @@ func (app *App) topic(w http.ResponseWriter, r *http.Request) {
 		}
 		questions = append(questions, q)
 	}
-	app.writeJSON(w, http.StatusOK, map[string]any{"id": id, "title": title, "questions": questions, "run_id": runID, "kind": kind})
+	app.writeJSON(w, http.StatusOK, map[string]any{"id": id, "title": title, "questions": questions, "run_id": runID, "kind": kind, "numbering_total": len(numbers)})
 }
 func (app *App) answerTopic(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("topicID")
@@ -551,6 +565,10 @@ func (app *App) topicSummaries(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+		numbers := map[string]int{}
+		for index, content := range ids {
+			numbers[content] = index + 1
+		}
 		answered := map[string]bool{}
 		baseline := map[string]bool{}
 		if fullID > 0 {
@@ -585,6 +603,9 @@ func (app *App) topicSummaries(w http.ResponseWriter, r *http.Request) {
 			ids = ids[:0]
 			for _, ref := range frozen {
 				ids = append(ids, ref.CanonicalID)
+				if numbers[ref.CanonicalID] == 0 {
+					numbers[ref.CanonicalID] = len(numbers) + 1
+				}
 			}
 		} else {
 			for content := range item.Results {
@@ -595,14 +616,14 @@ func (app *App) topicSummaries(w http.ResponseWriter, r *http.Request) {
 		for _, content := range item.NewQuestionIDs {
 			newIDs[content] = true
 		}
-		for index, content := range ids {
+		for _, content := range ids {
 			if newIDs[content] || (fullID > 0 && !baseline[content]) {
 				continue
 			}
 			if !answered[content] {
 				item.Remaining++
 				if item.NextQuestion == 0 {
-					item.NextQuestion = index + 1
+					item.NextQuestion = numbers[content]
 				}
 			}
 		}
