@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { LinearStatistics, ReleaseDetails } from './LinearStatistics';
 import { LibrarySearch, SearchText, defaultSearchScope, type SearchScope } from './LibrarySearch';
 import { readRoute, useTrainingNavigation } from './navigation';
+import { topicReviewState } from './topicActions';
 import { PreferencesProvider, usePreferences, BilingualText, TrainingFrame } from './Preferences';
 
 type Answer = { letter: string; text: string; correct?: boolean };
@@ -793,7 +794,7 @@ function TopicStatistics({ stats, total, onReview }: { stats?: TopicSummary; tot
     {stats?.runs.map((run, index) => <section key={run.id}><b>{run.kind === 'new' ? 'Новые вопросы' : `Прохождение ${stats.runs.slice(index).filter((item) => item.kind === 'full').length}`}</b><time>{new Date(run.started_at).toLocaleString('ru-RU')}</time>
       <p>{run.completed_at ? 'Завершено' : 'В процессе'} · {run.answered}/{run.total} · ✓ {run.correct} · × {run.wrong}</p>{!!run.inherited && <p>Ранее отвечено в других темах или билетах: {run.inherited}</p>}
       {run.review ? <><p>Работа над ошибками: {run.review.completed_at ? 'выполнена' : 'в процессе'} · {run.review.answered}/{run.review.total} · ✓ {run.review.correct} · × {run.review.wrong}</p>
-        <button type="button" onClick={() => { setAnchor(null); onReview(run.id); }}>{run.review.completed_at ? 'Посмотреть работу над ошибками' : 'Продолжить работу над ошибками'}</button></>
+        {run.review.completed_at && <time>Завершена: {new Date(run.review.completed_at).toLocaleString('ru-RU')}</time>}<button type="button" onClick={() => { setAnchor(null); onReview(run.id); }}>{run.review.completed_at ? 'Посмотреть работу над ошибками' : 'Продолжить работу над ошибками'}</button></>
         : run.completed_at && run.wrong > 0 ? <button type="button" onClick={() => { setAnchor(null); onReview(run.id); }}>Сделать работу над ошибками</button> : <p>{run.completed_at ? 'Ошибок нет' : 'Работа над ошибками доступна после завершения'}</p>}
     </section>)}
   </div>, document.body)}</>;
@@ -927,22 +928,23 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     const own = items.filter((q) => q.topic_ids.includes(node.id));
     const count = new Set(items.filter((q) => q.verified).map((q) => q.canonical_id)).size;
     const stats = summaries?.[node.id];
+    const reviewState=topicReviewState(stats?.runs??[]);
+    const pendingReview=reviewState.pending;
     if(query&&!ancestorMatch&&!branchMatches(node))return null;
     const titleMatch=ancestorMatch||nodeMatches(node);
     return <details className={`library-branch ${children.length ? 'library-section' : ''}`} key={node.id} data-library-id={node.id} open={!!query || expanded.includes(node.id)} onToggle={(event) => { if (!query) toggleBranch(node.id, event.currentTarget.open); }}><summary><span className="library-node-title"><SearchText text={node.label_ru} query={query} enabled={node.parent_id?searchScope.subtopics:searchScope.topics}/></span>{children.length ? <span className="topic-counts"><span>Тем: {children.length}</span><span>Пройдено: {summaries ? children.filter((child) => summaries[child.id]?.completed && !summaries[child.id]?.new_count).length : '…'}</span></span> : <TopicStatistics stats={stats} total={count} onReview={(parent) => openTopic(node.id, undefined, { reviewParent: parent })} />}</summary>
       <div className="library-children">{!children.length && count > 0 && <div className="topic-start-actions"><div className="topic-start-primary"><button type="button" className="primary library-start" data-new-tooltip={stats?.new_count ? `Новых неотвеченных вопросов: ${stats.new_count}` : undefined} disabled={!summaries} onClick={() => {
         if (stats?.new_count) { openTopic(node.id, undefined, { newQuestions: true }); return; }
-        const fullRun = stats?.runs.find((run) => run.kind === 'full');
-        const failedRun = stats?.wrong ? stats.runs.find((run) => run.id >= (fullRun?.id ?? 0) && run.completed_at && run.wrong > 0) : undefined;
         if (stats?.remaining) { openTopic(node.id); return; }
         if (stats?.completed) {
-          if (failedRun) openTopic(node.id, undefined, { reviewParent: failedRun.id });
+          if (pendingReview) openTopic(node.id, undefined, { reviewParent: pendingReview.id });
           else void repeatTopic(node.id);
         } else openTopic(node.id);
-      }}>{stats?.new_count ? 'Пройти новые' : stats?.remaining ? 'Продолжить тему' : stats?.completed ? stats.wrong > 0 ? 'Повторить вопросы с ошибками' : 'Пройти тему снова' : 'Начать тему'}{!stats?.new_count && !!stats?.remaining && <small>с вопроса {stats.next_question}</small>}</button>{!!stats?.new_count && <span className="topic-new-badge">New<small>{questionCount(stats.new_count)}</small></span>}</div>
+      }}>{stats?.new_count ? 'Пройти новые' : stats?.remaining ? 'Продолжить тему' : stats?.completed ? pendingReview ? pendingReview.review ? 'Продолжить работу над ошибками' : 'Повторить вопросы с ошибками' : 'Пройти тему снова' : 'Начать тему'}{!stats?.new_count && !!stats?.remaining && <small>с вопроса {stats.next_question}</small>}</button>{!!stats?.new_count && <span className="topic-new-badge">New<small>{questionCount(stats.new_count)}</small></span>}</div>
 
       {!!stats?.new_count && stats.remaining > 0 && <button type="button" className="repeat-full-topic continue-main" title={`Осталось: ${stats.remaining} (без новых вопросов)`} onClick={() => openTopic(node.id)}>Продолжить основное прохождение <small>с вопроса {stats.next_question}</small></button>}
-      {!stats?.new_count && stats?.completed && stats.wrong > 0 && <button className="repeat-full-topic" type="button" onClick={() => void repeatTopic(node.id)}>Пройти всю тему снова</button>}</div>}{children.map(child=>topic(child,titleMatch))}{!children.length && questionList(own, true, node,titleMatch)}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
+      {reviewState.completed && <span className="topic-review-completed">✓ Работа над ошибками выполнена</span>}
+      {!stats?.new_count && stats?.completed && pendingReview && <button className="repeat-full-topic" type="button" onClick={() => void repeatTopic(node.id)}>Пройти всю тему снова</button>}</div>}{children.map(child=>topic(child,titleMatch))}{!children.length && questionList(own, true, node,titleMatch)}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
     </details>;
   }
   return <main className={`library-page ${sectionId ? 'section-library' : ''}`} ref={root}>
@@ -1059,15 +1061,15 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   useEffect(() => {
     if (!topic) return;
     const requested = topic.questions.findIndex((item) => item.id === initialQuestion);
-    if (requested < 0 && topic.questions[position]) onQuestion(topic.questions[position].id, true, topic.run_id);
-  }, [initialQuestion, topic, position, onQuestion]);
+    if (requested < 0 && topic.questions[position]) onQuestion(topic.questions[position].id, true, reviewParent ? undefined : topic.run_id);
+  }, [initialQuestion, topic, position, onQuestion, reviewParent]);
   useEffect(() => { panel.current?.scrollTo({ top: 0 }); panel.current?.parentElement?.scrollTo({ top: 0 }); }, [position]);
   useEffect(() => {
     function close(event: KeyboardEvent) { if (event.key === 'Escape') setMenuOpen(false); }
     document.addEventListener('keydown', close);
     return () => document.removeEventListener('keydown', close);
   }, []);
-  function goTo(index: number) { if (topic?.questions[index]) onQuestion(topic.questions[index].id); setHelpOpen(false); }
+  function goTo(index: number) { if (topic?.questions[index]) onQuestion(topic.questions[index].id, false, reviewParent ? undefined : topic.run_id); setHelpOpen(false); }
   async function answer(letter: string) {
     const question = topic?.questions[position];
     if (!question || question.progress || busy) return;
@@ -1087,7 +1089,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   const finishReady = done === total;
   const nextUnanswered = topic.questions.findIndex((item, index) => index > position && !item.progress);
   const nextPosition = nextUnanswered >= 0 ? nextUnanswered : topic.questions.findIndex((item) => !item.progress);
-  const previousPosition = topic.questions.reduce((previous, item, index) => index < position && !item.progress ? index : previous, -1);
+  const previousPosition = reviewParent ? position-1 : topic.questions.reduce((previous, item, index) => index < position && !item.progress ? index : previous, -1);
   const progress = Math.round(done / total * 100);
   const help = q.help[language] || q.help.en;
   return <TrainingFrame>

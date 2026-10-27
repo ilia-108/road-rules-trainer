@@ -855,3 +855,5 @@ button { font:inherit; }
 .search-navigation button:disabled { opacity:.4; }
 .library-tree mark { color:inherit; background:#ffe79b; border-radius:2px; }
 .library-tree .search-current mark { background:#ffbf47; outline:1px solid #d69418; }
+
+.topic-review-completed { display:inline-flex; align-items:center; gap:6px; padding:5px 0; color:#238247; font-size:12px; font-weight:600; }
