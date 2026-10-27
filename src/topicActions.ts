@@ -23,9 +23,9 @@ export function topicContinuation(progress:ContinuationProgress) {
  const added=Math.max(0,progress.new_count);
  const remaining=existing+added;
  if(!remaining)return {
-  target:'saved' as const,
+  target:'repeat' as const,
   label:'Тема пройдена',
-  tooltip:`Вы ответили на все ${questions(progress.total)}. Можно посмотреть сохранённые ответы. Повторное прохождение запускается отдельно.`,
+  tooltip:`Вы ответили на все ${questions(progress.total)}. «Пройти тему снова» начнёт новое прохождение. Предыдущие результаты останутся в истории.`,
  };
  if(!existing&&added)return {
   target:'new' as const,

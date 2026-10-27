@@ -878,3 +878,5 @@ button { font:inherit; }
 @keyframes library-return-pulse { from { filter:blur(3px); opacity:.55; } to { filter:blur(5px); opacity:.35; } }
 @keyframes library-return-glow { from { opacity:.6; } to { opacity:1; } }
 @media(prefers-reduced-motion:reduce) { .restoring-library>:not(.library-restore-message),.library-restore-message { animation:none; } }
+
+.topic-start-primary .topic-review-completed { align-self:center; line-height:1.35; }

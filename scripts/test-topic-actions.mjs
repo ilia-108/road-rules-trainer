@@ -32,8 +32,8 @@ test('mixed continuation prioritizes the main run while showing all pending ques
 test('only new questions resume the separate new-question batch',()=>{
  const state=topicContinuation({...progress,remaining:0,new_count:3});assert.equal(state.target,'new');assert.match(state.label,/Тема пройдена/);assert.match(state.tooltip,/3 вопроса/);
 });
-test('completed topics open saved answers without implicitly resetting progress',()=>{
- const state=topicContinuation({...progress,remaining:0});assert.equal(state.target,'saved');assert.equal(state.label,'Тема пройдена');assert.match(state.tooltip,/сохранённые ответы/);
+test('completed topics offer a new run while retaining historical results',()=>{
+ const state=topicContinuation({...progress,remaining:0});assert.equal(state.target,'repeat');assert.equal(state.label,'Тема пройдена');assert.match(state.tooltip,/Предыдущие результаты останутся в истории/);
 });
 test('unstarted topics use the same continuation action',()=>{
  const state=topicContinuation({...progress,remaining:20,answered:0,next_question:1});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 20 вопросов из 20');
