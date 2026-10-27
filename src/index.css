@@ -857,3 +857,8 @@ button { font:inherit; }
 .library-tree .search-current mark { background:#ffbf47; outline:1px solid #d69418; }
 
 .topic-review-completed { display:inline-flex; align-items:center; gap:6px; padding:5px 0; color:#238247; font-size:12px; font-weight:600; }
+
+/* Reserve space for saving feedback so answer text does not move on selection. */
+.answer { position:relative; padding-right:62px; }
+.answer-saving { position:absolute; right:16px; top:50%; transform:translateY(-50%); width:32px; height:24px; color:var(--green); pointer-events:none; }
+.answer[aria-busy="true"] { border-color:var(--green); opacity:1; }

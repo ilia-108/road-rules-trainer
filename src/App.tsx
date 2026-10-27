@@ -991,6 +991,13 @@ function prepareQuestionImage(url: string | null | undefined, signal: AbortSigna
   });
 }
 
+function QuestionLoader() {
+  return <span className="question-loader" aria-hidden="true"><span /><span /><span /></span>;
+}
+function AnswerSaving({loading}:{loading:boolean}) {
+  return loading ? <span className="answer-saving" role="status" aria-label="Сохраняем ответ"><QuestionLoader /></span> : null;
+}
+
 function NextQuestionButton({ label = 'Следующий вопрос →', disabled, imageUrl, onNext }: {
   label?: string; disabled: boolean; imageUrl?: string | null; onNext: () => void;
 }) {
@@ -1017,7 +1024,7 @@ function NextQuestionButton({ label = 'Следующий вопрос →', dis
   return <button className="primary next next-loading-button" type="button" disabled={disabled || loading}
     aria-busy={loading} aria-label={loading ? 'Загружаем следующий вопрос' : label} onClick={() => void next()}>
     <span className="next-button-label" aria-hidden={loading}>{label}</span>
-    {loading && <span className="question-loader" aria-hidden="true"><span /><span /><span /></span>}
+    {loading && <QuestionLoader />}
   </button>;
 }
 
@@ -1038,6 +1045,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   const [helpOpen, setHelpOpen] = useState(false);
   const [language, setLanguage] = useState<HelpLanguage>('ru');
   const [busy, setBusy] = useState(false);
+  const [pendingAnswer,setPendingAnswer]=useState<{question:string;letter:string}|null>(null);
   const [error, setError] = useState('');
   const panel = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -1073,12 +1081,12 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   async function answer(letter: string) {
     const question = topic?.questions[position];
     if (!question || question.progress || busy) return;
-    setBusy(true); setError('');
+    setBusy(true); setPendingAnswer({question:question.id,letter}); setError('');
     try {
       const result = await api<TopicAnswerProgress>(`/api/topics/${encodeURIComponent(topicId)}/answers`, { method: 'POST', body: JSON.stringify({ question_id: question.id, selected_letter: letter, review_id: reviewID, run_id: reviewID ? undefined : topic?.run_id }) });
       setTopic((current) => current ? { ...current, questions: current.questions.map((q) => q.id === question.id ? { ...q, progress: result } : q) } : null);
     } catch (err) { setError(err instanceof Error ? err.message : 'Не удалось сохранить ответ'); }
-    finally { setBusy(false); }
+    finally { setBusy(false); setPendingAnswer(null); }
   }
   const q = topic?.questions[position];
   if (!topic || !q) return error ? <main className="loading error-message"><p role="alert">{error}</p><button className="secondary" onClick={onBack}>Панель обучения</button></main> : <PageLoader />;
@@ -1116,7 +1124,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
           <div className="question-heading-row"><h2><BilingualText text={q.question} /></h2></div>
           <div className="answer-scroll" ref={panel}><div className="answers">{q.answers.map((choice) => {
             const state = q.progress ? choice.letter === q.progress.correct_letter ? 'correct' : choice.letter === q.progress.selected_letter ? 'wrong' : 'muted' : '';
-            return <button type="button" className={`answer ${state}`} key={choice.letter} disabled={!!q.progress || busy} onClick={() => answer(choice.letter)}><span className="answer-letter">{choice.letter}</span><BilingualText text={choice.text} answer /></button>;
+            return <button type="button" className={`answer ${state}`} key={choice.letter} disabled={!!q.progress || busy} aria-busy={pendingAnswer?.question===q.id&&pendingAnswer.letter===choice.letter} onClick={() => answer(choice.letter)}><span className="answer-letter">{choice.letter}</span><BilingualText text={choice.text} answer /><AnswerSaving loading={pendingAnswer?.question===q.id&&pendingAnswer.letter===choice.letter}/></button>;
           })}</div>
           {error && <p role="alert" className="answer-error">{error}</p>}
 
@@ -1186,6 +1194,7 @@ function TrainerApp() {
   const [serverAttemptId, setServerAttemptId] = useState<string | null>(null);
   const [correctLetters, setCorrectLetters] = useState<Record<string, string>>({});
   const [submittingAnswer, setSubmittingAnswer] = useState(false);
+  const [pendingAnswer,setPendingAnswer]=useState<{test:number;question:number;letter:string}|null>(null);
   const [answerError, setAnswerError] = useState('');
   const [serverStatistics, setServerStatistics] = useState<AttemptHistory[] | null>(null);
   const [serverProgress, setServerProgress] = useState<Record<string, TicketStats>>({});
@@ -1415,6 +1424,7 @@ function TrainerApp() {
   async function chooseAnswer(letter: string) {
     if (answered || submittingAnswer) return;
     setSubmittingAnswer(true);
+    setPendingAnswer({test:testId,question:questionIndex,letter});
     setAnswerError('');
     try {
       let activeAttempt = serverAttemptId;
@@ -1452,6 +1462,7 @@ function TrainerApp() {
       setAnswerError(requestError instanceof Error ? requestError.message : 'Не удалось сохранить ответ');
     } finally {
       setSubmittingAnswer(false);
+      setPendingAnswer(null);
     }
   }
 
@@ -1773,9 +1784,11 @@ function TrainerApp() {
                   className={`answer ${state}`}
                   onClick={() => chooseAnswer(answer.letter)}
                   disabled={answered || submittingAnswer}
+                  aria-busy={pendingAnswer?.test===testId&&pendingAnswer.question===questionIndex&&pendingAnswer.letter===answer.letter}
                 >
                   <span className="answer-letter">{answer.letter}</span>
                   <BilingualText text={answer.text} answer />
+                  <AnswerSaving loading={pendingAnswer?.test===testId&&pendingAnswer.question===questionIndex&&pendingAnswer.letter===answer.letter}/>
                 </button>
               );
             })}
