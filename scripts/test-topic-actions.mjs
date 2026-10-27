@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {topicReviewState,topicContinuation} from '../src/topicActions.ts';
+import {topicReviewState,topicContinuation,topicReturnState} from '../src/topicActions.ts';
 const run=(id,kind='full',review)=>({id,kind,wrong:2,completed_at:'2026-10-27T10:00:00Z',review});
 test('completed review is retained without another invitation',()=>{
  const state=topicReviewState([run(1,'full',{completed_at:'2026-10-27T11:00:00Z'})]);
@@ -37,4 +37,13 @@ test('completed topics open saved answers without implicitly resetting progress'
 });
 test('unstarted topics use the same continuation action',()=>{
  const state=topicContinuation({...progress,remaining:20,answered:0,next_question:1});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 20 вопросов из 20');
+});
+
+test('return closes the worked topic, opens ancestors and retains other branches',()=>{
+ const state=topicReturnState({expanded:['other','leaf'],search:'old filter',completedTopic:{id:'old'}},'leaf',[{id:'section'},{id:'middle',parent_id:'section'},{id:'leaf',parent_id:'middle'}]);
+ assert.deepEqual(state.expanded,['other','middle','section']);assert.equal(state.recentTopic,'leaf');assert.equal(state.search,'');assert.equal(state.completedTopic,undefined);assert.equal(state.collection,null);
+});
+test('working with a different topic replaces the recent marker',()=>{
+ const state=topicReturnState({expanded:['first','second'],recentTopic:'first'},'second',[{id:'second'}]);
+ assert.equal(state.recentTopic,'second');assert.deepEqual(state.expanded,['first']);
 });

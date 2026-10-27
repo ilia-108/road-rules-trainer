@@ -38,3 +38,10 @@ export function topicContinuation(progress:ContinuationProgress) {
   tooltip:`Не отвечено: ${questions(remaining)} из ${progress.total}. Продолжение с вопроса ${progress.next_question}; отвеченные вопросы пропускаются.${added?` Сначала оставшиеся вопросы основного прохождения (${existing}), затем новые (${added}) — отдельным набором с сохранением статистики.`:''}`,
  };
 }
+
+export function topicReturnState<T extends {expanded:string[]}>(view:T,id:string,nodes:{id:string;parent_id?:string|null}[]) {
+ const parents:string[]=[];
+ let parent=nodes.find(node=>node.id===id)?.parent_id;
+ while(parent&&!parents.includes(parent)) {parents.push(parent);parent=nodes.find(node=>node.id===parent)?.parent_id;}
+ return {...view,search:'',collection:null,expanded:[...new Set([...view.expanded.filter(item=>item!==id),...parents])],recentTopic:id,completedTopic:undefined};
+}

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { LinearStatistics, ReleaseDetails } from './LinearStatistics';
 import { LibrarySearch, SearchText, defaultSearchScope, type SearchScope } from './LibrarySearch';
 import { readRoute, useTrainingNavigation } from './navigation';
-import { topicReviewState, topicContinuation } from './topicActions';
+import { topicReviewState, topicContinuation, topicReturnState } from './topicActions';
 import { PreferencesProvider, usePreferences, BilingualText, TrainingFrame } from './Preferences';
 
 type Answer = { letter: string; text: string; correct?: boolean };
@@ -845,7 +845,7 @@ function SectionNavigator({ library, catalog, getStats, sectionId, onOpenTopic }
 function TopicHeading({ section, title }: { section: React.ReactNode; title: string }) {
   return <><div className="section-heading">{section}</div><div className="theme-heading"><h1>{title}</h1></div></>;
 }
-type LibraryView = { searchScope?: SearchScope; search: string; expanded: string[]; scrollTop: number; collection: TicketCollection | null; completedTopic?: { id: string; question: string } };
+type LibraryView = { recentTopic?: string; searchScope?: SearchScope; search: string; expanded: string[]; scrollTop: number; collection: TicketCollection | null; completedTopic?: { id: string; question: string } };
 
 function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view, onRemember, sectionId, knowledge, onStatistics }: {
   catalog: CatalogEntry[]; library: LibraryData; onOpen: (id: number, index?: number) => void; onOpenTopic: (id: string, question?: string, options?: TopicLaunch) => void;
@@ -869,21 +869,18 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     const container = scroll.current;
     if (!container) return;
     container.scrollTop = view.scrollTop;
-    if (!summaries || !view.completedTopic) return;
-    const branch = Array.from(container.querySelectorAll<HTMLElement>('[data-library-id]')).find((item) => item.dataset.libraryId === view.completedTopic?.id);
-    const row = Array.from(branch?.querySelectorAll<HTMLElement>('[data-question-id]') ?? []).find((item) => item.dataset.questionId === view.completedTopic?.question);
-    const target = row ?? branch;
-    if (target) {
-      // Keep the completed answer and the following question or topic in view.
-      container.scrollTop += target.getBoundingClientRect().top - container.getBoundingClientRect().top - 16;
-    }
-  }, [summaries, view.scrollTop, view.completedTopic]);
+    const targetId=view.recentTopic??view.completedTopic?.id;
+    if (!summaries || !targetId) return;
+    const branch = Array.from(container.querySelectorAll<HTMLElement>('[data-library-id]')).find(item=>item.dataset.libraryId===targetId);
+    if(branch)container.scrollTop+=branch.getBoundingClientRect().top-container.getBoundingClientRect().top-24;
+  }, [summaries, view.scrollTop, view.completedTopic,view.recentTopic]);
+
   function toggleBranch(id: string, open: boolean) {
     setExpanded((current) => open ? current.includes(id) ? current : [...current, id] : current.includes(id) ? current.filter((item) => item !== id) : current);
   }
   function rememberView() {
     onRemember({
-      search, searchScope, collection, scrollTop: scroll.current?.scrollTop ?? 0,
+      recentTopic:view.recentTopic, completedTopic:view.completedTopic, search, searchScope, collection, scrollTop: scroll.current?.scrollTop ?? 0,
       expanded: Array.from(root.current?.querySelectorAll<HTMLDetailsElement>('details[data-library-id][open]') ?? []).map((node) => node.dataset.libraryId!),
     });
   }
@@ -929,7 +926,8 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     const continuation=stats?topicContinuation({...stats,total:count}):null;
     if(query&&!ancestorMatch&&!branchMatches(node))return null;
     const titleMatch=ancestorMatch||nodeMatches(node);
-    return <details className={`library-branch ${children.length ? 'library-section' : ''}`} key={node.id} data-library-id={node.id} open={!!query || expanded.includes(node.id)} onToggle={(event) => { if (!query) toggleBranch(node.id, event.currentTarget.open); }}><summary><span className="library-node-title"><SearchText text={node.label_ru} query={query} enabled={node.parent_id?searchScope.subtopics:searchScope.topics}/></span>{children.length ? <span className="topic-counts"><span>Тем: {children.length}</span><span>Пройдено: {summaries ? children.filter((child) => summaries[child.id]?.completed && !summaries[child.id]?.new_count).length : '…'}</span></span> : <TopicStatistics stats={stats} total={count} onReview={(parent) => openTopic(node.id, undefined, { reviewParent: parent })} />}</summary>
+    const recent=!sectionId&&view.recentTopic===node.id;
+    return <details className={`library-branch ${children.length ? 'library-section' : ''} ${recent?'recent-topic':''}`} key={node.id} data-library-id={node.id} open={!!query || expanded.includes(node.id)} onToggle={(event) => { if (!query) toggleBranch(node.id, event.currentTarget.open); }}><summary>{recent&&<span className="recent-topic-label" role="note">Вы только что занимались этой подтемой</span>}<span className="library-node-title"><SearchText text={node.label_ru} query={query} enabled={node.parent_id?searchScope.subtopics:searchScope.topics}/></span>{children.length ? <span className="topic-counts"><span>Тем: {children.length}</span><span>Пройдено: {summaries ? children.filter((child) => summaries[child.id]?.completed && !summaries[child.id]?.new_count).length : '…'}</span></span> : <TopicStatistics stats={stats} total={count} onReview={(parent) => openTopic(node.id, undefined, { reviewParent: parent })} />}</summary>
       <div className="library-children">{!children.length && count > 0 && <div className="topic-start-actions"><div className="topic-start-primary"><button type="button" className="primary library-start" disabled={!stats} onClick={() => {
         openTopic(node.id,undefined,continuation?.target==='new'?{newQuestions:true}:undefined);
       }}>Продолжить тему</button>{continuation&&<span className="topic-continuation-chip" tabIndex={0} title={continuation.tooltip} aria-label={`${continuation.label}. ${continuation.tooltip}`}>{continuation.label}</span>}</div>
@@ -1146,17 +1144,31 @@ function TrainerApp() {
     window.history.replaceState({ ...window.history.state, libraryView: snapshot }, '');
     setLibraryView(snapshot);
   };
-  useEffect(() => {
-    const restoreLibrary = (event: PopStateEvent) => { if (event.state?.libraryView) setLibraryView(event.state.libraryView); };
-    window.addEventListener('popstate', restoreLibrary);
-    return () => window.removeEventListener('popstate', restoreLibrary);
-  }, []);
   const activeTopic = route.screen === 'topic' ? route : null;
   const setActiveTopic = (value: ({ id: string; question?: string } & TopicLaunch) | null) => navigate(value ? { screen: 'topic', ...value } : { screen: 'home' });
   const onTopicQuestion = useCallback((question: string, replace = false, runId?: number) => {
     if (route.screen === 'topic') navigate({ ...route, question, runId: runId ?? route.runId }, replace);
   }, [route, navigate]);
   const [library, setLibrary] = useState<LibraryData | null>(null);
+  useEffect(()=>{
+    const restoreLibrary=(event:PopStateEvent)=>{
+      const saved=event.state?.libraryView;
+      if(route.screen==='topic'&&readRoute().screen==='home'&&library){
+        const snapshot=topicReturnState(saved??libraryView,route.id,library.nodes);
+        setLibraryView(snapshot);
+        window.history.replaceState({...window.history.state,libraryView:snapshot},'');
+      }else if(saved)setLibraryView(saved);
+    };
+    window.addEventListener('popstate',restoreLibrary);
+    return()=>window.removeEventListener('popstate',restoreLibrary);
+  },[route,library,libraryView]);
+  function returnToLibrary(id:string){
+    const snapshot=topicReturnState(libraryView,id,library?.nodes??[]);
+    setLibraryView(snapshot);
+    navigate({screen:'home'});
+    window.history.replaceState({...window.history.state,libraryView:snapshot},'');
+  }
+
   const pendingQuestion = useRef<number | null>(null);
   const [catalog, setCatalog] = useState<CatalogEntry[]>([]);
   const [savedProgress, setSavedProgress] = useState<ProgressStore>(() => readProgress());
@@ -1614,23 +1626,13 @@ function TrainerApp() {
     const ancestors: string[] = [];
     let parent = node?.parent_id;
     while (parent) { const ancestor = library.nodes.find((item) => item.id === parent); if (!ancestor) break; ancestors.unshift(ancestor.label_ru); parent = ancestor.parent_id; }
-    return <TopicTrainer key={`${activeTopic.id}:${activeTopic.reviewParent ?? (activeTopic.newQuestions ? 'new' : 'full')}`} newQuestions={activeTopic.newQuestions} runId={activeTopic.runId} topicId={activeTopic.id} initialQuestion={activeTopic.question} reviewParent={activeTopic.reviewParent} path={ancestors.join(' / ')} onQuestion={onTopicQuestion} sectionNavigation={<SectionNavigator library={library} catalog={catalog} getStats={getTicketStats} sectionId={node?.parent_id ?? activeTopic.id} onOpenTopic={(id, question, options) => setActiveTopic({ id, question, ...options })} />} onBack={() => { setActiveTopic(null); setHome(true); }} onFinish={(question) => {
-      const expanded = [activeTopic.id];
-      let parentId = node?.parent_id;
-      while (parentId) {
-        expanded.push(parentId);
-        parentId = library.nodes.find((item) => item.id === parentId)?.parent_id;
-      }
-      setLibraryView((current) => ({ ...current, search: '', collection: null, expanded: [...new Set([...current.expanded, ...expanded])], completedTopic: { id: activeTopic.id, question } }));
-      setActiveTopic(null);
-      setHome(true);
-    }} />;
+    return <TopicTrainer key={`${activeTopic.id}:${activeTopic.reviewParent ?? (activeTopic.newQuestions ? 'new' : 'full')}`} newQuestions={activeTopic.newQuestions} runId={activeTopic.runId} topicId={activeTopic.id} initialQuestion={activeTopic.question} reviewParent={activeTopic.reviewParent} path={ancestors.join(' / ')} onQuestion={onTopicQuestion} sectionNavigation={<SectionNavigator library={library} catalog={catalog} getStats={getTicketStats} sectionId={node?.parent_id ?? activeTopic.id} onOpenTopic={(id, question, options) => setActiveTopic({ id, question, ...options })} />} onBack={()=>returnToLibrary(activeTopic.id)} onFinish={()=>returnToLibrary(activeTopic.id)} />;
   }
   if (route.screen === 'statistics') return <LinearStatistics onBack={() => navigate({ screen: 'home' })} onOpenTopic={(id) => {
     const expanded = [id];
     let parent = library?.nodes.find(node => node.id === id)?.parent_id;
     while (parent) { expanded.unshift(parent); parent = library?.nodes.find(node => node.id === parent)?.parent_id; }
-    setLibraryView(current => ({ ...current, search: '', collection: null, expanded: [...new Set([...current.expanded, ...expanded])], completedTopic: { id, question: '' } }));
+    setLibraryView(current => ({ ...current, search: '', collection: null, expanded: [...new Set([...current.expanded, ...expanded])], recentTopic:undefined, completedTopic: { id, question: '' } }));
     navigate({ screen: 'home' });
   }} />;
   if (home && catalog.length && library) return <QuestionLibrary onStatistics={() => navigate({ screen: 'statistics' })} view={libraryView} knowledge={knowledge} onRemember={rememberLibrary} catalog={catalog} library={library} onOpen={openLibraryQuestion} onOpenTopic={(id, question, options) => { setActiveTopic({ id, question, ...options }); }} getStats={getTicketStats} />;

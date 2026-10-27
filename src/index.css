@@ -866,3 +866,9 @@ button { font:inherit; }
 .topic-start-actions .topic-start-primary { flex-wrap:wrap; row-gap:8px; }
 .topic-continuation-chip { display:inline-flex; align-items:center; align-self:center; max-width:100%; padding:3px 8px; border:1px solid #efbe72; border-radius:7px; background:#fff0d5; color:#92500d; font-size:11px; line-height:1.35; font-weight:600; cursor:help; }
 .topic-continuation-chip:focus-visible { outline:2px solid #b96a16; outline-offset:3px; }
+
+.library-branch.recent-topic { position:relative; margin:20px 0 8px; border:1px solid #e8aa55; border-radius:10px; box-shadow:0 0 0 1px #efbe7226; background:#fffaf1; }
+.library-branch.recent-topic>summary { padding-top:17px; border-radius:10px; }
+.library-branch.recent-topic>summary:hover { background:#fff1d9; }
+.recent-topic-label { position:absolute; top:0; left:14px; transform:translateY(-50%); max-width:calc(100% - 28px); padding:2px 8px; border:1px solid #efbe72; border-radius:6px; color:#92500d; background:#fff0d5; font-size:10px; font-weight:600; line-height:1.35; }
+@media(max-width:480px) { .library-branch.recent-topic { margin-top:26px; } .recent-topic-label { font-size:9px; } }
