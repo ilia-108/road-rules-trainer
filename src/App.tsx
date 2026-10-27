@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { LinearStatistics, ReleaseDetails } from './LinearStatistics';
 import { LibrarySearch, SearchText, defaultSearchScope, type SearchScope } from './LibrarySearch';
 import { readRoute, useTrainingNavigation } from './navigation';
-import { topicReviewState } from './topicActions';
+import { topicReviewState, topicContinuation } from './topicActions';
 import { PreferencesProvider, usePreferences, BilingualText, TrainingFrame } from './Preferences';
 
 type Answer = { letter: string; text: string; correct?: boolean };
@@ -753,10 +753,6 @@ type LibraryData = { nodes: TopicNode[]; questions: LibraryQuestion[] };
 type TopicRun = { inherited?: number; kind: 'full' | 'new'; id: number; total: number; answered: number; correct: number; wrong: number; started_at: string; completed_at: string | null; review?: TopicRun };
 type TopicLaunch = { reviewParent?: number; newQuestions?: boolean; runId?: number };
 type TopicSummary = { remaining: number; repeat_in_progress?: boolean; new_count: number; new_question_ids: string[]; question_runs: Record<string, number>; completed: boolean; runs: TopicRun[]; total: number; answered: number; correct: number; wrong: number; next_question: number; results: Record<string, boolean> };
-function questionCount(count: number) {
-  const form = new Intl.PluralRules('ru').select(count);
-  return `${count} ${form === 'one' ? 'вопрос' : form === 'few' ? 'вопроса' : 'вопросов'}`;
-}
 
 function TopicStatistics({ stats, total, onReview }: { stats?: TopicSummary; total: number; onReview: (parent: number) => void }) {
   const [anchor, setAnchor] = useState<{ top: number; right: number; bottom?: number } | null>(null);
@@ -930,21 +926,16 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     const stats = summaries?.[node.id];
     const reviewState=topicReviewState(stats?.runs??[]);
     const pendingReview=reviewState.pending;
+    const continuation=stats?topicContinuation({...stats,total:count}):null;
     if(query&&!ancestorMatch&&!branchMatches(node))return null;
     const titleMatch=ancestorMatch||nodeMatches(node);
     return <details className={`library-branch ${children.length ? 'library-section' : ''}`} key={node.id} data-library-id={node.id} open={!!query || expanded.includes(node.id)} onToggle={(event) => { if (!query) toggleBranch(node.id, event.currentTarget.open); }}><summary><span className="library-node-title"><SearchText text={node.label_ru} query={query} enabled={node.parent_id?searchScope.subtopics:searchScope.topics}/></span>{children.length ? <span className="topic-counts"><span>Тем: {children.length}</span><span>Пройдено: {summaries ? children.filter((child) => summaries[child.id]?.completed && !summaries[child.id]?.new_count).length : '…'}</span></span> : <TopicStatistics stats={stats} total={count} onReview={(parent) => openTopic(node.id, undefined, { reviewParent: parent })} />}</summary>
-      <div className="library-children">{!children.length && count > 0 && <div className="topic-start-actions"><div className="topic-start-primary"><button type="button" className="primary library-start" data-new-tooltip={stats?.new_count ? `Новых неотвеченных вопросов: ${stats.new_count}` : undefined} disabled={!summaries} onClick={() => {
-        if (stats?.new_count) { openTopic(node.id, undefined, { newQuestions: true }); return; }
-        if (stats?.remaining) { openTopic(node.id); return; }
-        if (stats?.completed) {
-          if (pendingReview) openTopic(node.id, undefined, { reviewParent: pendingReview.id });
-          else void repeatTopic(node.id);
-        } else openTopic(node.id);
-      }}>{stats?.new_count ? 'Пройти новые' : stats?.remaining ? 'Продолжить тему' : stats?.completed ? pendingReview ? pendingReview.review ? 'Продолжить работу над ошибками' : 'Повторить вопросы с ошибками' : 'Пройти тему снова' : 'Начать тему'}{!stats?.new_count && !!stats?.remaining && <small>с вопроса {stats.next_question}</small>}</button>{!!stats?.new_count && <span className="topic-new-badge">New<small>{questionCount(stats.new_count)}</small></span>}</div>
-
-      {!!stats?.new_count && stats.remaining > 0 && <button type="button" className="repeat-full-topic continue-main" title={`Осталось: ${stats.remaining} (без новых вопросов)`} onClick={() => openTopic(node.id)}>Продолжить основное прохождение <small>с вопроса {stats.next_question}</small></button>}
+      <div className="library-children">{!children.length && count > 0 && <div className="topic-start-actions"><div className="topic-start-primary"><button type="button" className="primary library-start" disabled={!stats} onClick={() => {
+        openTopic(node.id,undefined,continuation?.target==='new'?{newQuestions:true}:undefined);
+      }}>Продолжить тему</button>{continuation&&<span className="topic-continuation-chip" tabIndex={0} title={continuation.tooltip} aria-label={`${continuation.label}. ${continuation.tooltip}`}>{continuation.label}</span>}</div>
+      {pendingReview&&<button type="button" className="repeat-full-topic" onClick={()=>openTopic(node.id,undefined,{reviewParent:pendingReview.id})}>{pendingReview.review?'Продолжить работу над ошибками':'Повторить вопросы с ошибками'}</button>}
       {reviewState.completed && <span className="topic-review-completed">✓ Работа над ошибками выполнена</span>}
-      {!stats?.new_count && stats?.completed && pendingReview && <button className="repeat-full-topic" type="button" onClick={() => void repeatTopic(node.id)}>Пройти всю тему снова</button>}</div>}{children.map(child=>topic(child,titleMatch))}{!children.length && questionList(own, true, node,titleMatch)}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
+      {stats?.completed&&!stats.new_count&&<button className="repeat-full-topic" type="button" onClick={() => void repeatTopic(node.id)}>Пройти всю тему снова</button>}</div>}{children.map(child=>topic(child,titleMatch))}{!children.length && questionList(own, true, node,titleMatch)}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
     </details>;
   }
   return <main className={`library-page ${sectionId ? 'section-library' : ''}`} ref={root}>

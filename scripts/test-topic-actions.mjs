@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {topicReviewState} from '../src/topicActions.ts';
+import {topicReviewState,topicContinuation} from '../src/topicActions.ts';
 const run=(id,kind='full',review)=>({id,kind,wrong:2,completed_at:'2026-10-27T10:00:00Z',review});
 test('completed review is retained without another invitation',()=>{
  const state=topicReviewState([run(1,'full',{completed_at:'2026-10-27T11:00:00Z'})]);
@@ -20,4 +20,21 @@ test('new full repeat does not invite review of older cycles',()=>{
 });
 test('no errors does not offer a review',()=>{
  assert.deepEqual(topicReviewState([{...run(1),wrong:0}]),{pending:undefined,completed:false});
+});
+
+const progress={remaining:7,new_count:0,total:20,answered:13,next_question:4};
+test('ordinary continuation describes remaining questions separately',()=>{
+ const state=topicContinuation(progress);assert.equal(state.target,'main');assert.equal(state.label,'Осталось 7 вопросов из 20');
+});
+test('mixed continuation prioritizes the main run while showing all pending questions',()=>{
+ const state=topicContinuation({...progress,new_count:3,total:23});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 10 из 23, из них 3 новых');assert.match(state.tooltip,/отдельным набором/);
+});
+test('only new questions resume the separate new-question batch',()=>{
+ const state=topicContinuation({...progress,remaining:0,new_count:3});assert.equal(state.target,'new');assert.match(state.label,/Тема пройдена/);assert.match(state.tooltip,/3 вопроса/);
+});
+test('completed topics open saved answers without implicitly resetting progress',()=>{
+ const state=topicContinuation({...progress,remaining:0});assert.equal(state.target,'saved');assert.equal(state.label,'Тема пройдена');assert.match(state.tooltip,/сохранённые ответы/);
+});
+test('unstarted topics use the same continuation action',()=>{
+ const state=topicContinuation({...progress,remaining:20,answered:0,next_question:1});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 20 вопросов из 20');
 });
