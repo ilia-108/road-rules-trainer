@@ -29,8 +29,8 @@ export function topicContinuation(progress:ContinuationProgress) {
  };
  if(!existing&&added)return {
   target:'new' as const,
-  label:'Тема пройдена · появились новые вопросы',
-  tooltip:`Вы уже прошли эту тему. Появилось ${questions(added)}. «Продолжить тему» откроет только новые вопросы; предыдущие результаты сохранятся.`,
+  label:`Тема пройдена · ${questionForms.select(added)==='one'?'появился':'появилось'} ${added} ${questionForms.select(added)==='one'?'новый вопрос':questionForms.select(added)==='few'?'новых вопроса':'новых вопросов'}`,
+  tooltip:`Вы уже прошли эту тему. Добавлено ${questions(added)}. «Пройти новые вопросы» откроет только новые вопросы; предыдущие результаты сохранятся.`,
  };
  return {
   target:'main' as const,

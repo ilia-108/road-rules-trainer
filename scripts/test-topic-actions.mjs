@@ -47,3 +47,10 @@ test('working with a different topic replaces the recent marker',()=>{
  const state=topicReturnState({expanded:['first','second'],recentTopic:'first'},'second',[{id:'second'}]);
  assert.equal(state.recentTopic,'second');assert.deepEqual(state.expanded,['first']);
 });
+
+test('new-only chip includes its count with Russian plural forms',()=>{
+ for(const [count,label] of [[1,'появился 1 новый вопрос'],[2,'появилось 2 новых вопроса'],[5,'появилось 5 новых вопросов'],[21,'появился 21 новый вопрос']]) {
+  const state=topicContinuation({...progress,remaining:0,new_count:count});
+  assert.equal(state.label,`Тема пройдена · ${label}`);assert.match(state.tooltip,/Пройти новые вопросы/);
+ }
+});
