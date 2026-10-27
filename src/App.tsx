@@ -859,21 +859,27 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
   const [collection, setCollection] = useState<TicketCollection | null>(view.collection);
   const [summaries, setSummaries] = useState<Record<string, TopicSummary> | null>(null);
   const [progressError, setProgressError] = useState('');
+  const [returnReady,setReturnReady]=useState(()=>Boolean(sectionId)||!(view.recentTopic||view.completedTopic));
   useEffect(() => {
     let active = true;
     void api<Record<string, TopicSummary>>('/api/topics/progress').then((data) => { if (active) setSummaries(data); }).catch(() => { if (active) setProgressError('Не удалось загрузить прогресс. Обновите страницу, чтобы продолжить тему.'); });
     return () => { active = false; };
   }, []);
-  // Restore after mounting and after progress counts finish changing row heights.
+  // Reveal the dashboard only after its final layout and target scroll are ready.
   useLayoutEffect(() => {
     const container = scroll.current;
     if (!container) return;
     container.scrollTop = view.scrollTop;
     const targetId=view.recentTopic??view.completedTopic?.id;
-    if (!summaries || !targetId) return;
-    const branch = Array.from(container.querySelectorAll<HTMLElement>('[data-library-id]')).find(item=>item.dataset.libraryId===targetId);
-    if(branch)container.scrollTop+=branch.getBoundingClientRect().top-container.getBoundingClientRect().top-24;
-  }, [summaries, view.scrollTop, view.completedTopic,view.recentTopic]);
+    if(targetId&&!summaries&&!progressError)return;
+    if(targetId){
+      const branch=Array.from(container.querySelectorAll<HTMLElement>('[data-library-id]')).find(item=>item.dataset.libraryId===targetId);
+      if(branch)container.scrollTop+=branch.getBoundingClientRect().top-container.getBoundingClientRect().top-24;
+    }
+    let reveal=0;
+    const layout=requestAnimationFrame(()=>{reveal=requestAnimationFrame(()=>setReturnReady(true));});
+    return()=>{cancelAnimationFrame(layout);cancelAnimationFrame(reveal);};
+  }, [summaries,progressError,view.scrollTop,view.completedTopic,view.recentTopic]);
 
   function toggleBranch(id: string, open: boolean) {
     setExpanded((current) => open ? current.includes(id) ? current : [...current, id] : current.includes(id) ? current.filter((item) => item !== id) : current);
@@ -936,7 +942,8 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
       {stats?.completed&&!stats.new_count&&<button className="repeat-full-topic" type="button" onClick={() => void repeatTopic(node.id)}>Пройти всю тему снова</button>}</div>}{children.map(child=>topic(child,titleMatch))}{!children.length && questionList(own, true, node,titleMatch)}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
     </details>;
   }
-  return <main className={`library-page ${sectionId ? 'section-library' : ''}`} ref={root}>
+  return <main className={`library-page ${sectionId ? 'section-library' : ''} ${returnReady?'':'restoring-library'}`} ref={root} aria-busy={!returnReady}>
+    {!returnReady&&<div className="library-restore-message" role="status">Возвращаемся к подтеме</div>}
     {!sectionId && <>
     <header className="library-header"><a href="/" className="library-brand">Теория вождения</a></header>
     <section className="library-intro"><h1>Выбери предметную тематику для тренировки сейчас</h1>
@@ -1086,7 +1093,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   const finishReady = done === total;
   const nextUnanswered = topic.questions.findIndex((item, index) => index > position && !item.progress);
   const nextPosition = nextUnanswered >= 0 ? nextUnanswered : topic.questions.findIndex((item) => !item.progress);
-  const previousPosition = reviewParent ? position-1 : topic.questions.reduce((previous, item, index) => index < position && !item.progress ? index : previous, -1);
+  const previousPosition = position-1;
   const progress = Math.round(done / total * 100);
   const help = q.help[language] || q.help.en;
   return <TrainingFrame>
