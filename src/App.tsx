@@ -943,7 +943,7 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     </details>;
   }
   return <main className={`library-page ${sectionId ? 'section-library' : ''} ${returnReady?'':'restoring-library'}`} ref={root} aria-busy={!returnReady}>
-    {!returnReady&&<div className="library-restore-message" role="status">Возвращаемся к подтеме</div>}
+    {!returnReady&&<div className="library-restore-message" role="status">Возвращаемся к теме</div>}
     {!sectionId && <>
     <header className="library-header"><a href="/" className="library-brand">Теория вождения</a></header>
     <section className="library-intro"><h1>Выбери предметную тематику для тренировки сейчас</h1>
@@ -1018,7 +1018,7 @@ function NextQuestionButton({ label = 'Следующий вопрос →', dis
     navigation.current = null;
   }
   return <button className="primary next next-loading-button" type="button" disabled={disabled || loading}
-    aria-busy={loading} aria-label={loading ? 'Загружаем следующий вопрос' : label} onClick={() => void next()}>
+    title={label} aria-busy={loading} aria-label={loading ? 'Загружаем следующий вопрос' : label} onClick={() => void next()}>
     <span className="next-button-label" aria-hidden={loading}>{label}</span>
     {loading && <QuestionLoader />}
   </button>;

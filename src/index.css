@@ -880,3 +880,6 @@ button { font:inherit; }
 @media(prefers-reduced-motion:reduce) { .restoring-library>:not(.library-restore-message),.library-restore-message { animation:none; } }
 
 .topic-start-primary .topic-review-completed { align-self:center; line-height:1.35; }
+
+.next-button-label { display:block; max-width:100%; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media(max-width:820px) { .question-navigation .controls>button { flex:1 1 0; min-width:0; max-width:100%; } }
