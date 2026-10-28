@@ -43,5 +43,5 @@ export function topicReturnState<T extends {expanded:string[]}>(view:T,id:string
  const parents:string[]=[];
  let parent=nodes.find(node=>node.id===id)?.parent_id;
  while(parent&&!parents.includes(parent)) {parents.push(parent);parent=nodes.find(node=>node.id===parent)?.parent_id;}
- return {...view,search:'',collection:null,expanded:[...new Set([...view.expanded.filter(item=>item!==id),...parents])],recentTopic:id,completedTopic:undefined};
+ return {...view,search:'',collection:null,expanded:[...new Set([...view.expanded,...parents,id])],recentTopic:id,completedTopic:undefined};
 }

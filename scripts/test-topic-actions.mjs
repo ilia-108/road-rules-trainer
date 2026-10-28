@@ -39,13 +39,13 @@ test('unstarted topics use the same continuation action',()=>{
  const state=topicContinuation({...progress,remaining:20,answered:0,next_question:1});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 20 вопросов из 20');
 });
 
-test('return closes the worked topic, opens ancestors and retains other branches',()=>{
+test('return opens the worked topic and ancestors while retaining other branches',()=>{
  const state=topicReturnState({expanded:['other','leaf'],search:'old filter',completedTopic:{id:'old'}},'leaf',[{id:'section'},{id:'middle',parent_id:'section'},{id:'leaf',parent_id:'middle'}]);
- assert.deepEqual(state.expanded,['other','middle','section']);assert.equal(state.recentTopic,'leaf');assert.equal(state.search,'');assert.equal(state.completedTopic,undefined);assert.equal(state.collection,null);
+ assert.deepEqual(state.expanded,['other','leaf','middle','section']);assert.equal(state.recentTopic,'leaf');assert.equal(state.search,'');assert.equal(state.completedTopic,undefined);assert.equal(state.collection,null);
 });
 test('working with a different topic replaces the recent marker',()=>{
  const state=topicReturnState({expanded:['first','second'],recentTopic:'first'},'second',[{id:'second'}]);
- assert.equal(state.recentTopic,'second');assert.deepEqual(state.expanded,['first']);
+ assert.equal(state.recentTopic,'second');assert.deepEqual(state.expanded,['first','second']);
 });
 
 test('new-only chip includes its count with Russian plural forms',()=>{

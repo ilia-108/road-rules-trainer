@@ -847,6 +847,10 @@ function TopicHeading({ section, title }: { section: React.ReactNode; title: str
 }
 type LibraryView = { recentTopic?: string; searchScope?: SearchScope; search: string; expanded: string[]; scrollTop: number; collection: TicketCollection | null; completedTopic?: { id: string; question: string } };
 
+function TopicQuestionList({children}:{children:React.ReactNode}) {
+  return <details className="topic-questions-disclosure"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 7 6 5 6-5M6 13l6 5 6-5"/></svg><span className="question-list-closed">Раскрыть список вопросов</span><span className="question-list-open">Свернуть список вопросов</span></summary>{children}</details>;
+}
+
 function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view, onRemember, sectionId, knowledge, onStatistics }: {
   catalog: CatalogEntry[]; library: LibraryData; onOpen: (id: number, index?: number) => void; onOpenTopic: (id: string, question?: string, options?: TopicLaunch) => void;
   onStatistics?: () => void; knowledge?: QuestionKnowledge; sectionId?: string; getStats: (entry: CatalogEntry) => TicketStats; view: LibraryView; onRemember: (snapshot: LibraryView) => void;
@@ -933,13 +937,13 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     if(query&&!ancestorMatch&&!branchMatches(node))return null;
     const titleMatch=ancestorMatch||nodeMatches(node);
     const recent=!sectionId&&view.recentTopic===node.id;
-    return <details className={`library-branch ${children.length ? 'library-section' : ''} ${recent?'recent-topic':''}`} key={node.id} data-library-id={node.id} open={!!query || expanded.includes(node.id)} onToggle={(event) => { if (!query) toggleBranch(node.id, event.currentTarget.open); }}><summary>{recent&&<span className="recent-topic-label" role="note">Вы только что занимались этой подтемой</span>}<span className="library-node-title"><SearchText text={node.label_ru} query={query} enabled={node.parent_id?searchScope.subtopics:searchScope.topics}/></span>{children.length ? <span className="topic-counts"><span>Тем: {children.length}</span><span>Пройдено: {summaries ? children.filter((child) => summaries[child.id]?.completed && !summaries[child.id]?.new_count).length : '…'}</span></span> : <TopicStatistics stats={stats} total={count} onReview={(parent) => openTopic(node.id, undefined, { reviewParent: parent })} />}</summary>
+    return <details className={`library-branch ${children.length ? 'library-section' : ''} ${recent?'recent-topic':''}`} key={node.id} data-library-id={node.id} open={!!query || expanded.includes(node.id)} onToggle={(event) => { if (!event.currentTarget.open) event.currentTarget.querySelectorAll<HTMLDetailsElement>('.topic-questions-disclosure').forEach(list=>{list.open=false;}); if (!query) toggleBranch(node.id, event.currentTarget.open); }}><summary>{recent&&<span className="recent-topic-label" role="note">Вы только что занимались этой подтемой</span>}<span className="library-node-title"><SearchText text={node.label_ru} query={query} enabled={node.parent_id?searchScope.subtopics:searchScope.topics}/></span>{children.length ? <span className="topic-counts"><span>Тем: {children.length}</span><span>Пройдено: {summaries ? children.filter((child) => summaries[child.id]?.completed && !summaries[child.id]?.new_count).length : '…'}</span></span> : <TopicStatistics stats={stats} total={count} onReview={(parent) => openTopic(node.id, undefined, { reviewParent: parent })} />}</summary>
       <div className="library-children">{!children.length && count > 0 && <div className="topic-start-actions"><div className="topic-start-primary"><button type="button" className="primary library-start" disabled={!stats} onClick={() => {
         if(continuation?.target==='repeat'){void repeatTopic(node.id);return;}
         openTopic(node.id,undefined,continuation?.target==='new'?{newQuestions:true}:undefined);
       }}>{continuation?.target==='repeat'?'Пройти тему снова':continuation?.target==='new'?'Пройти новые вопросы':'Продолжить тему'}</button>{continuation&&<span className="topic-continuation-chip" tabIndex={0} title={continuation.tooltip} aria-label={`${continuation.label}. ${continuation.tooltip}`}>{continuation.label}</span>}{reviewState.completed && <span className="topic-review-completed">✓ Работа над ошибками выполнена</span>}</div>
       {pendingReview&&<button type="button" className="repeat-full-topic" onClick={()=>openTopic(node.id,undefined,{reviewParent:pendingReview.id})}>{pendingReview.review?'Продолжить работу над ошибками':'Повторить вопросы с ошибками'}</button>}
-</div>}{children.map(child=>topic(child,titleMatch))}{!children.length && questionList(own, true, node,titleMatch)}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
+</div>}{children.map(child=>topic(child,titleMatch))}{!children.length && count>0 && <TopicQuestionList>{questionList(own, true, node,titleMatch)}</TopicQuestionList>}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
     </details>;
   }
   return <main className={`library-page ${sectionId ? 'section-library' : ''} ${returnReady?'':'restoring-library'}`} ref={root} aria-busy={!returnReady}>
