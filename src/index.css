@@ -875,6 +875,8 @@ button { font:inherit; }
 
 .restoring-library>:not(.library-restore-message) { pointer-events:none; user-select:none; filter:blur(4px); opacity:.5; animation:library-return-pulse 1.25s ease-in-out infinite alternate; }
 .library-restore-message { position:fixed; z-index:80; top:45%; left:50%; transform:translate(-50%,-50%); padding:12px 20px; border-radius:14px; color:#90602d; background:#fff7eae6; box-shadow:0 0 60px 25px #fff0d580; font-size:14px; font-weight:550; text-align:center; pointer-events:none; animation:library-return-glow 1.25s ease-in-out infinite alternate; }
+.library-restore-message .question-loader { position:static; inset:auto; height:16px; margin-top:12px; gap:6px; }
+.library-restore-message .question-loader>span { width:6px; height:6px; background:#b77c39; }
 @keyframes library-return-pulse { from { filter:blur(3px); opacity:.55; } to { filter:blur(5px); opacity:.35; } }
 @keyframes library-return-glow { from { opacity:.6; } to { opacity:1; } }
 @media(prefers-reduced-motion:reduce) { .restoring-library>:not(.library-restore-message),.library-restore-message { animation:none; } }

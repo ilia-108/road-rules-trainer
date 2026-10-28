@@ -952,7 +952,7 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     </details>;
   }
   return <main className={`library-page ${sectionId ? 'section-library' : ''} ${returnReady?'':'restoring-library'}`} ref={root} aria-busy={!returnReady}>
-    {!returnReady&&<div className="library-restore-message" role="status">Возвращаемся к теме</div>}
+    {!returnReady&&<div className="library-restore-message" role="status"><span>Возвращаемся к теме</span><QuestionLoader /></div>}
     {!sectionId && <>
     <header className="library-header"><a href="/" className="library-brand">Теория вождения</a></header>
     <section className="library-intro"><h1>Выбери предметную тематику для тренировки сейчас</h1>
