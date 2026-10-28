@@ -28,6 +28,7 @@ test('ordinary continuation describes remaining questions separately',()=>{
 });
 test('mixed continuation prioritizes the main run while showing all pending questions',()=>{
  const state=topicContinuation({...progress,new_count:3,total:23});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 10 из 23, из них 3 новых');assert.match(state.tooltip,/отдельным набором/);
+ assert.equal(topicContinuation({...progress,remaining:1,new_count:2,total:3,answered:0}).label,'Осталось 3, из них 2 новых');
 });
 test('only new questions resume the separate new-question batch',()=>{
  const state=topicContinuation({...progress,remaining:0,new_count:3});assert.equal(state.target,'new');assert.match(state.label,/Тема пройдена/);assert.match(state.tooltip,/3 вопроса/);
@@ -36,7 +37,7 @@ test('completed topics offer a new run while retaining historical results',()=>{
  const state=topicContinuation({...progress,remaining:0});assert.equal(state.target,'repeat');assert.equal(state.label,'Тема пройдена');assert.match(state.tooltip,/Предыдущие результаты останутся в истории/);
 });
 test('unstarted topics use the same continuation action',()=>{
- const state=topicContinuation({...progress,remaining:20,answered:0,next_question:1});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 20 вопросов из 20');
+ const state=topicContinuation({...progress,remaining:20,answered:0,next_question:1});assert.equal(state.target,'main');assert.equal(state.label,'Осталось 20 вопросов');
 });
 
 test('return opens the worked topic and ancestors while retaining other branches',()=>{

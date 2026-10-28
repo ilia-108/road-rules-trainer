@@ -36,9 +36,10 @@ export function topicContinuation(progress:ContinuationProgress) {
   label:`Тема пройдена · ${questionForms.select(added)==='one'?'появился':'появилось'} ${added} ${questionForms.select(added)==='one'?'новый вопрос':questionForms.select(added)==='few'?'новых вопроса':'новых вопросов'}`,
   tooltip:`Вы уже прошли эту тему. Добавлено ${questions(added)}. «Пройти новые вопросы» откроет только новые вопросы; предыдущие результаты сохранятся.`,
  };
+ const totalSuffix=remaining===progress.total?'':` из ${progress.total}`;
  return {
   target:'main' as const,
-  label:added?`Осталось ${remaining} из ${progress.total}, из них ${added} новых`:`Осталось ${questions(remaining)} из ${progress.total}`,
+  label:added?`Осталось ${remaining}${totalSuffix}, из них ${added} новых`:`Осталось ${questions(remaining)}${totalSuffix}`,
   tooltip:`Не отвечено: ${questions(remaining)} из ${progress.total}. Продолжение с вопроса ${progress.next_question}; отвеченные вопросы пропускаются.${added?` Сначала оставшиеся вопросы основного прохождения (${existing}), затем новые (${added}) — отдельным набором с сохранением статистики.`:''}`,
  };
 }
