@@ -7,12 +7,19 @@ materials=parser.parse_args().materials
 def save(p,d):
  p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
 tax=json.load(open(repo/'materials/taxonomy.json'))
+leaves={node['id'] for node in tax['nodes'] if node['parent_id']}
 import importlib.util, hashlib
 spec=importlib.util.spec_from_file_location('topic_classification',repo/'scripts/topic-classification.py')
 classifier=importlib.util.module_from_spec(spec);spec.loader.exec_module(classifier)
 overrides_path=repo/'materials/topic-overrides.json'
 overrides=json.loads(overrides_path.read_text()) if overrides_path.exists() else {}
 def classify(q):
+ if q.get('classification_reviewed'):
+  tags=q['topic_ids'];primary=q['primary_topic_id']
+  if not tags or primary not in tags or not set(tags)<=leaves:
+   raise ValueError(f"Invalid reviewed topics: {q.get('question_id')}")
+  q['classification_review_required']=False
+  return tags
  norm=lambda value:' '.join(value.lower().split())
  parts=[norm(q['question']),(q.get('image_url') or '').rsplit('/',1)[-1]]+sorted(norm(a['text']) for a in q['answers'])
  cid=hashlib.sha256('\n'.join(parts).encode()).hexdigest()[:24]
@@ -31,6 +38,8 @@ for path in sorted(materials.glob('exam-*-capture.json')):
   # Keep only the image filename; remote origins must not be persisted.
   q['image_url']=(q.get('image_url') or '').rsplit('/',1)[-1]
   ordinal=q.get('source_ordinal',n);q['source_ordinal']=ordinal;q['question_id']=f'exam:{sid}:{ordinal:02}';q['topic_ids']=classify(q)
+  # Archived captures stay out of tickets, topics and canonical memberships.
+  if q.get('training_enabled',True) is False:continue
   valid=sum(a.get('correct') is True for a in q['answers'])==1 and not q.get('deferred')
   ref={'test_id':tid,'source_test_id':sid,'source_ordinal':ordinal,'question_id':q['question_id'],'question':q['question'],'topic_ids':q['topic_ids'],'primary_topic_id':q['primary_topic_id'],'verified':valid,'index':len(verified) if valid else None}
   refs.append(ref)
@@ -42,7 +51,10 @@ for path in sorted(materials.glob('exam-*-capture.json')):
     elif not imagefile.exists(): raise FileNotFoundError(materials/q['local_image'])
    verified.append({**q,'local_image':image})
  save(repo/f'materials/exam/exam-{sid}-capture.json',d)
- save(repo/f'backend/seed/test-{tid}.json',{'test_id':tid,'title':f'Exam collection · {sid}','collection':'Exam Test','questions':verified})
+ seed_path=repo/f'backend/seed/test-{tid}.json'
+ if verified:
+  save(seed_path,{'test_id':tid,'title':f'Exam collection · {sid}','collection':'Exam Test','questions':verified})
+ elif seed_path.exists():seed_path.unlink()
 for path in sorted((repo/'backend/seed').glob('test-*.json')):
  d=json.load(open(path))
  if d.get('collection')!='Thematic Test':continue
@@ -53,7 +65,7 @@ for node in tax['nodes']:
 save(repo/'public/library.json',{'nodes':tax['nodes'],'questions':refs})
 if (materials/'deferred-questions.json').resolve() != (repo/'materials/exam/deferred-questions.json').resolve():
  shutil.copyfile(materials/'deferred-questions.json',repo/'materials/exam/deferred-questions.json')
-(repo/'materials/exam/README.md').write_text('''# Exam collection captures\n\nCollection: English, Exam collection.\n\nQuestion identity is collection + source ticket + source ordinal. Exam training IDs are 100000 + source ticket; thematic IDs are unchanged. Raw captures retain all original question numbers, explanations, image filenames and source-confirmed answers. Only questions with exactly one confirmed answer are imported for training. Deferred questions have no confirmed answer and remain in the captures and deferred list; proposed answers are not answer keys. Training array indexes may differ from source ordinals when deferred questions are excluded. Images for confirmed questions are in public/tests/exam/<source ticket>/q<source ordinal>.jpg.\n\nTopic navigation supports multiple labels per question. Classification uses prompt and answer text only, with canonical editorial overrides in topic-overrides.json. Explanations never enter classification. Every classified question has a primary topic and directly relevant optional secondary topics. Collection membership is independent of topic membership.\n''')
+(repo/'materials/exam/README.md').write_text('''# Exam collection captures\n\nCollection: English, Exam collection.\n\nQuestion identity is collection + source ticket + source ordinal. Exam training IDs are 100000 + source ticket; thematic IDs are unchanged. Raw captures retain all original question numbers, explanations, image filenames and source-confirmed answers. Only questions with exactly one confirmed answer are imported for training. Deferred questions have no confirmed answer and remain in the captures and deferred list; proposed answers are not answer keys. Training array indexes may differ from source ordinals when deferred questions are excluded. Images for confirmed questions are in public/tests/exam/<source ticket>/q<source ordinal>.jpg.\n\nStaged questions have `portal_completed: true` and `training_enabled: false`. They retain source-confirmed answers, bilingual text, original ordinals, local images, explanation text and local explanation HTML/images in this directory. The importer excludes them from seed tickets, both library artifacts and canonical memberships. Omitted `training_enabled` keeps the existing enabled behavior. To publish selected questions, set their `training_enabled` to true and rerun the importer, then audit topics and canonical consistency before release. `classification_reviewed: true` preserves their manually reviewed leaf topics and primary topic during import. Disabling an entire captured ticket removes its generated seed file; runtime database removal of previously published questions requires a separate migration.\n\nTopic navigation supports multiple labels per question. Classification uses prompt and answer text only, with canonical editorial overrides in topic-overrides.json. Explanations never enter classification. Every classified question has a primary topic and directly relevant optional secondary topics. Collection membership is independent of topic membership.\n''')
 print('References',len(refs),'verified',sum(q['verified'] for q in refs),'deferred',sum(not q['verified'] for q in refs))
 
 import hashlib
