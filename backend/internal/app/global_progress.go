@@ -13,6 +13,7 @@ import (
 // Original answer events remain immutable. Reviews never replace normal-training knowledge.
 func migrateGlobalProgress(db *sql.DB) error {
 	_, err := db.Exec(`
+ CREATE TABLE IF NOT EXISTS topic_error_reviews (run_id INTEGER PRIMARY KEY REFERENCES topic_runs(id) ON DELETE CASCADE);
  CREATE TABLE IF NOT EXISTS topic_run_inherited (
  run_id INTEGER NOT NULL REFERENCES topic_runs(id) ON DELETE CASCADE,
  content_id TEXT NOT NULL REFERENCES question_contents(id),
@@ -30,6 +31,13 @@ func migrateGlobalProgress(db *sql.DB) error {
  SELECT r.user_id,a.content_id,a.selected_text,a.correct,a.answered_at,'topic:'||printf('%020d',r.id) FROM topic_run_answers a JOIN topic_runs r ON r.id=a.run_id WHERE r.parent_id IS NULL
  UNION ALL
  SELECT t.user_id,m.content_id,COALESCE(choice.text,''),a.correct,a.answered_at,'ticket:'||t.id FROM attempt_answers a JOIN attempts t ON t.id=a.attempt_id JOIN question_memberships m ON m.question_id=a.question_id LEFT JOIN answers choice ON choice.question_id=a.question_id AND choice.letter=a.selected_letter WHERE t.mode='full'
+ )) WHERE position=1;
+ CREATE VIEW IF NOT EXISTS question_current_progress AS
+ SELECT user_id,content_id,selected_text,correct,answered_at FROM (
+ SELECT *,ROW_NUMBER() OVER(PARTITION BY user_id,content_id ORDER BY julianday(answered_at) DESC,answered_at DESC,event_id DESC) position FROM (
+ SELECT user_id,content_id,selected_text,correct,answered_at,0 event_id FROM question_progress
+ UNION ALL
+ SELECT r.user_id,a.content_id,a.selected_text,a.correct,a.answered_at,r.id FROM topic_run_answers a JOIN topic_runs r ON r.id=a.run_id WHERE r.parent_id IS NOT NULL
  )) WHERE position=1;
  CREATE VIEW IF NOT EXISTS topic_run_progress AS
  SELECT run_id,content_id,selected_text,correct,answered_at,0 AS inherited FROM topic_run_answers
@@ -124,7 +132,7 @@ type knownAnswer struct {
 }
 
 func (app *App) globalAnswers(userID string) (map[string]knownAnswer, error) {
-	rows, err := app.db.Query(`SELECT content_id,selected_text,correct,answered_at FROM question_progress WHERE user_id=?`, userID)
+	rows, err := app.db.Query(`SELECT content_id,selected_text,correct,answered_at FROM question_current_progress WHERE user_id=?`, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +154,7 @@ func (app *App) globalAnswers(userID string) (map[string]knownAnswer, error) {
 func inheritTopicProgress(tx *sql.Tx, id int64) error {
 	_, err := tx.Exec(`INSERT OR IGNORE INTO topic_run_inherited
  SELECT r.id,p.content_id,p.selected_text,p.correct,p.answered_at FROM topic_runs r
- JOIN topic_run_members m ON m.run_id=r.id JOIN question_progress p ON p.user_id=r.user_id AND p.content_id=m.content_id
+ JOIN topic_run_members m ON m.run_id=r.id JOIN question_current_progress p ON p.user_id=r.user_id AND p.content_id=m.content_id
  WHERE r.id=? AND r.parent_id IS NULL AND r.completed_at IS NULL
  AND r.id >= (SELECT MAX(f.id) FROM topic_runs f WHERE f.user_id=r.user_id AND f.topic_id=r.topic_id AND f.parent_id IS NULL AND f.kind='full')
  AND (r.kind='new' OR EXISTS(SELECT 1 FROM topic_reorganized_runs c WHERE c.run_id=r.id) OR r.id=(SELECT MIN(f.id) FROM topic_runs f WHERE f.user_id=r.user_id AND f.topic_id=r.topic_id AND f.parent_id IS NULL AND f.kind='full'))
@@ -203,7 +211,7 @@ func (app *App) reorganizedQuestions(userID, topicID string) (map[string]bool, e
 // Only previously answered questions expose their feedback, scoped to the signed-in user.
 func (app *App) questionKnowledge(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(userContextKey).(user).ID
-	rows, err := app.db.Query(`SELECT p.content_id,p.selected_text,p.correct,p.answered_at,COALESCE((SELECT a.text FROM answers a JOIN question_memberships m ON m.question_id=a.question_id WHERE m.content_id=p.content_id AND a.correct=1 LIMIT 1),'') FROM question_progress p WHERE p.user_id=?`, userID)
+	rows, err := app.db.Query(`SELECT p.content_id,p.selected_text,p.correct,p.answered_at,COALESCE((SELECT a.text FROM answers a JOIN question_memberships m ON m.question_id=a.question_id WHERE m.content_id=p.content_id AND a.correct=1 LIMIT 1),'') FROM question_current_progress p WHERE p.user_id=?`, userID)
 	if err != nil {
 		app.serverError(w, err)
 		return

@@ -20,6 +20,8 @@ type ContinuationProgress={remaining:number;new_count:number;total:number;answer
 const questionForms=new Intl.PluralRules('ru');
 const questions=(count:number)=>`${count} ${questionForms.select(count)==='one'?'вопрос':questionForms.select(count)==='few'?'вопроса':'вопросов'}`;
 
+export function topicErrorLabel(count:number) {return `${questions(count)} с ${questionForms.select(count)==='one'?'ошибкой':'ошибками'}`;}
+
 export function topicContinuation(progress:ContinuationProgress) {
  const existing=Math.max(0,progress.remaining);
  const added=Math.max(0,progress.new_count);

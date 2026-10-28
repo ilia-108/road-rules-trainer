@@ -11,7 +11,7 @@ export function readRoute(search = window.location.search): TrainingRoute {
   const id = params.get('id');
   if (params.get('screen') === 'statistics') return { screen: 'statistics' };
   const positive = (key: string) => { const value = Number(params.get(key)); return Number.isInteger(value) && value > 0 ? value : undefined; };
-  if (params.get('screen') === 'topic' && id) return { screen: 'topic', id, question: params.get('question') || undefined, runId: positive('run'), reviewParent: positive('review'), newQuestions: params.get('new') === '1' };
+  if (params.get('screen') === 'topic' && id) return { screen: 'topic', id, question: params.get('question') || undefined, runId: positive('run'), reviewParent: Number.isInteger(Number(params.get('review')))&&Number(params.get('review'))<0?Number(params.get('review')):positive('review'), newQuestions: params.get('new') === '1' };
   if (params.get('screen') === 'ticket' && positive('id')) return { screen: 'ticket', id: positive('id')!, index: positive('question') ? positive('question')! - 1 : undefined };
   return { screen: 'home' };
 }

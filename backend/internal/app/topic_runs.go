@@ -9,17 +9,18 @@ import (
 )
 
 type topicRunSummary struct {
-	Kind          string           `json:"kind"`
-	ID            int64            `json:"id"`
-	Total         int              `json:"total"`
-	Answered      int              `json:"answered"`
-	Correct       int              `json:"correct"`
-	Wrong         int              `json:"wrong"`
-	ReviewPending int              `json:"review_pending"`
-	Inherited     int              `json:"inherited"`
-	StartedAt     string           `json:"started_at"`
-	CompletedAt   *string          `json:"completed_at"`
-	Review        *topicRunSummary `json:"review,omitempty"`
+	Kind          string            `json:"kind"`
+	ID            int64             `json:"id"`
+	Total         int               `json:"total"`
+	Answered      int               `json:"answered"`
+	Correct       int               `json:"correct"`
+	Wrong         int               `json:"wrong"`
+	ReviewPending int               `json:"review_pending"`
+	Inherited     int               `json:"inherited"`
+	StartedAt     string            `json:"started_at"`
+	CompletedAt   *string           `json:"completed_at"`
+	Review        *topicRunSummary  `json:"review,omitempty"`
+	ErrorReviews  []topicRunSummary `json:"error_reviews,omitempty"`
 }
 
 // The legacy current-answer snapshot remains intact; copy it once into history.
@@ -87,27 +88,44 @@ const uncoveredTopicError = `NOT EXISTS (
 )`
 
 func (app *App) topicHistory(userID, topicID string) ([]topicRunSummary, error) {
-	rows, err := app.db.Query(`SELECT r.kind,r.id,r.parent_id,r.total,r.started_at,r.completed_at,COUNT(a.content_id),COALESCE(SUM(a.correct),0),COALESCE(SUM(a.inherited),0),(SELECT COUNT(*) FROM topic_run_progress a WHERE a.run_id=r.id AND a.correct=0 AND `+uncoveredTopicError+`) FROM topic_runs r LEFT JOIN topic_run_progress a ON a.run_id=r.id WHERE r.user_id=? AND r.topic_id=? GROUP BY r.id ORDER BY r.id DESC`, userID, topicID)
+	rows, err := app.db.Query(`SELECT r.kind,r.id,r.parent_id,r.total,r.started_at,r.completed_at,COUNT(a.content_id),COALESCE(SUM(a.correct),0),COALESCE(SUM(a.inherited),0),EXISTS(SELECT 1 FROM topic_error_reviews e WHERE e.run_id=r.id),(SELECT COUNT(*) FROM topic_run_progress a WHERE a.run_id=r.id AND a.correct=0 AND `+uncoveredTopicError+`) FROM topic_runs r LEFT JOIN topic_run_progress a ON a.run_id=r.id WHERE r.user_id=? AND r.topic_id=? GROUP BY r.id ORDER BY r.id DESC`, userID, topicID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 	runs := []topicRunSummary{}
 	reviews := map[int64]topicRunSummary{}
+	parents := map[int64]int64{}
+	errorReviews := []topicRunSummary{}
 	for rows.Next() {
 		var item topicRunSummary
 		var parent sql.NullInt64
-		if err := rows.Scan(&item.Kind, &item.ID, &parent, &item.Total, &item.StartedAt, &item.CompletedAt, &item.Answered, &item.Correct, &item.Inherited, &item.ReviewPending); err != nil {
+		var aggregate bool
+		if err := rows.Scan(&item.Kind, &item.ID, &parent, &item.Total, &item.StartedAt, &item.CompletedAt, &item.Answered, &item.Correct, &item.Inherited, &aggregate, &item.ReviewPending); err != nil {
 			return nil, err
 		}
 		item.Wrong = item.Answered - item.Correct
 		if parent.Valid {
+			parents[item.ID] = parent.Int64
+			if aggregate {
+				errorReviews = append(errorReviews, item)
+				continue
+			}
 			reviews[parent.Int64] = item
 		} else {
 			runs = append(runs, item)
 		}
 	}
 	for i := range runs {
+		for _, review := range errorReviews {
+			root := review.ID
+			for parents[root] != 0 {
+				root = parents[root]
+			}
+			if root == runs[i].ID {
+				runs[i].ErrorReviews = append(runs[i].ErrorReviews, review)
+			}
+		}
 		if review, ok := reviews[runs[i].ID]; ok {
 			runs[i].Review = &review
 		}
@@ -184,9 +202,11 @@ func (app *App) startTopicReview(w http.ResponseWriter, r *http.Request) {
 	app.writeJSON(w, 200, map[string]int64{"id": id})
 }
 func (app *App) reviewMembers(userID, topicID string, id int64, members []topicReference) ([]topicReference, error) {
-	rows, err := app.db.Query(`SELECT a.content_id FROM topic_runs r JOIN topic_run_progress a ON a.run_id=r.parent_id WHERE r.id=? AND r.user_id=? AND r.topic_id=? AND a.correct=0
+	rows, err := app.db.Query(`SELECT m.content_id FROM topic_runs r JOIN topic_error_reviews e ON e.run_id=r.id JOIN topic_run_members m ON m.run_id=r.id WHERE r.id=? AND r.user_id=? AND r.topic_id=?
+ UNION ALL
+ SELECT a.content_id FROM topic_runs r JOIN topic_run_progress a ON a.run_id=r.parent_id WHERE r.id=? AND r.user_id=? AND r.topic_id=? AND NOT EXISTS(SELECT 1 FROM topic_error_reviews e WHERE e.run_id=r.id) AND a.correct=0
  AND (NOT EXISTS(SELECT 1 FROM topic_run_members WHERE run_id=r.id)
- OR EXISTS(SELECT 1 FROM topic_run_members m WHERE m.run_id=r.id AND m.content_id=a.content_id))`, id, userID, topicID)
+ OR EXISTS(SELECT 1 FROM topic_run_members m WHERE m.run_id=r.id AND m.content_id=a.content_id))`, id, userID, topicID, id, userID, topicID)
 	if err != nil {
 		return nil, err
 	}

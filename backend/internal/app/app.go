@@ -79,6 +79,7 @@ func (app *App) routes() {
 	app.mux.Handle("GET /api/topics/{topicID}", app.requireUser(http.HandlerFunc(app.topic)))
 	app.mux.Handle("POST /api/topics/{topicID}/answers", app.requireUser(http.HandlerFunc(app.answerTopic)))
 	app.mux.Handle("POST /api/topics/{topicID}/new", app.requireUser(http.HandlerFunc(app.startNewTopicQuestions)))
+	app.mux.Handle("POST /api/topics/{topicID}/error-reviews", app.requireUser(http.HandlerFunc(app.startTopicErrorReview)))
 	app.mux.Handle("POST /api/topics/{topicID}/reviews/{runID}", app.requireUser(http.HandlerFunc(app.startTopicReview)))
 	app.mux.Handle("POST /api/topics/{topicID}/reset", app.requireUser(http.HandlerFunc(app.resetTopic)))
 	app.mux.Handle("GET /api/catalog", app.requireUser(http.HandlerFunc(app.catalog)))

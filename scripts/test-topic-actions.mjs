@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {topicReviewState,topicContinuation,topicReturnState} from '../src/topicActions.ts';
+import {topicReviewState,topicErrorLabel,topicContinuation,topicReturnState} from '../src/topicActions.ts';
 const run=(id,kind='full',review)=>({id,kind,wrong:2,completed_at:'2026-10-27T10:00:00Z',review});
 test('completed review is retained without another invitation',()=>{
  const state=topicReviewState([run(1,'full',{completed_at:'2026-10-27T11:00:00Z'})]);
@@ -68,4 +68,8 @@ test('unrelated errors still require review after an inherited duplicate is cove
   {...run(1),review_pending:1},
  ]);
  assert.equal(state.pending.id,1);assert.equal(state.completed,false);
+});
+
+test('error chip displays the exact current review count with Russian plural forms',()=>{
+ assert.equal(topicErrorLabel(1),'1 вопрос с ошибкой');assert.equal(topicErrorLabel(2),'2 вопроса с ошибками');assert.equal(topicErrorLabel(5),'5 вопросов с ошибками');
 });

@@ -484,7 +484,7 @@ func (app *App) topicSummaries(w http.ResponseWriter, r *http.Request) {
 		result[id] = &summary{Total: len(set), Results: map[string]bool{}}
 	}
 	current := r.Context().Value(userContextKey).(user)
-	rows, err := app.db.Query(`SELECT content_id,correct FROM question_progress WHERE user_id=?`, current.ID)
+	rows, err := app.db.Query(`SELECT content_id,correct FROM question_current_progress WHERE user_id=?`, current.ID)
 	if err != nil {
 		app.serverError(w, err)
 		return

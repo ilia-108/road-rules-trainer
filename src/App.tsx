@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { LinearStatistics, ReleaseDetails } from './LinearStatistics';
 import { LibrarySearch, SearchText, defaultSearchScope, type SearchScope } from './LibrarySearch';
 import { readRoute, useTrainingNavigation } from './navigation';
-import { topicReviewState, topicContinuation, topicReturnState } from './topicActions';
+import { topicReviewState, topicErrorLabel, topicContinuation, topicReturnState } from './topicActions';
 import { PreferencesProvider, usePreferences, BilingualText, TrainingFrame } from './Preferences';
 
 type Answer = { letter: string; text: string; correct?: boolean };
@@ -750,7 +750,7 @@ type LibraryQuestion = { canonical_id: string; test_id: number; source_test_id: 
 type TopicNode = { id: string; label_ru: string; parent_id: string | null };
 type LibraryData = { nodes: TopicNode[]; questions: LibraryQuestion[] };
 
-type TopicRun = { review_pending?: number; inherited?: number; kind: 'full' | 'new'; id: number; total: number; answered: number; correct: number; wrong: number; started_at: string; completed_at: string | null; review?: TopicRun };
+type TopicRun = { review_pending?: number; inherited?: number; kind: 'full' | 'new'; id: number; total: number; answered: number; correct: number; wrong: number; started_at: string; completed_at: string | null; review?: TopicRun; error_reviews?: TopicRun[] };
 type TopicLaunch = { reviewParent?: number; newQuestions?: boolean; runId?: number };
 type TopicSummary = { remaining: number; repeat_in_progress?: boolean; new_count: number; new_question_ids: string[]; question_runs: Record<string, number>; completed: boolean; runs: TopicRun[]; total: number; answered: number; correct: number; wrong: number; next_question: number; results: Record<string, boolean> };
 
@@ -789,6 +789,7 @@ function TopicStatistics({ stats, total, onReview }: { stats?: TopicSummary; tot
     {!stats?.runs.length && <p>Прохождений пока нет.</p>}
     {stats?.runs.map((run, index) => <section key={run.id}><b>{run.kind === 'new' ? 'Новые вопросы' : `Прохождение ${stats.runs.slice(index).filter((item) => item.kind === 'full').length}`}</b><time>{new Date(run.started_at).toLocaleString('ru-RU')}</time>
       <p>{run.completed_at ? 'Завершено' : 'В процессе'} · {run.answered}/{run.total} · ✓ {run.correct} · × {run.wrong}</p>{!!run.inherited && <p>Ранее отвечено в других темах или билетах: {run.inherited}</p>}
+      {run.error_reviews?.map(review=><div key={review.id}><p>Работа над ошибками темы: {review.completed_at?'завершена':'в процессе'} · {review.answered}/{review.total} · ✓ {review.correct} · × {review.wrong}</p><time>{new Date(review.started_at).toLocaleString('ru-RU')}</time><button type="button" onClick={()=>{setAnchor(null);onReview(-review.id);}}>Посмотреть работу над ошибками</button></div>)}
       {run.review ? <><p>Работа над ошибками: {run.review.completed_at ? 'выполнена' : 'в процессе'} · {run.review.answered}/{run.review.total} · ✓ {run.review.correct} · × {run.review.wrong}</p>
         {run.review.completed_at && <time>Завершена: {new Date(run.review.completed_at).toLocaleString('ru-RU')}</time>}<button type="button" onClick={() => { setAnchor(null); onReview(run.id); }}>{run.review.completed_at ? 'Посмотреть работу над ошибками' : 'Продолжить работу над ошибками'}</button></>
         : run.completed_at && run.wrong > 0 ? <button type="button" onClick={() => { setAnchor(null); onReview(run.id); }}>Сделать работу над ошибками</button> : <p>{run.completed_at ? 'Ошибок нет' : 'Работа над ошибками доступна после завершения'}</p>}
@@ -932,17 +933,21 @@ function QuestionLibrary({ catalog, library, onOpen, onOpenTopic, getStats, view
     const count = new Set(items.filter((q) => q.verified).map((q) => q.canonical_id)).size;
     const stats = summaries?.[node.id];
     const reviewState=topicReviewState(stats?.runs??[]);
-    const pendingReview=reviewState.pending;
+    const hasErrors=!!stats?.wrong;
     const continuation=stats?topicContinuation({...stats,total:count}):null;
+    const reviewPrimary=continuation?.target==='repeat'&&hasErrors;
+    const chipLabel=reviewPrimary?topicErrorLabel(stats?.wrong??0):continuation?.label;
+    const chipTooltip=reviewPrimary?'Откроются все текущие вопросы с ошибками этой темы. Верные ответы уберут их из списка ошибок.':continuation?.tooltip;
     if(query&&!ancestorMatch&&!branchMatches(node))return null;
     const titleMatch=ancestorMatch||nodeMatches(node);
     const recent=!sectionId&&view.recentTopic===node.id;
     return <details className={`library-branch ${children.length ? 'library-section' : ''} ${recent?'recent-topic':''}`} key={node.id} data-library-id={node.id} open={!!query || expanded.includes(node.id)} onToggle={(event) => { if (!event.currentTarget.open) event.currentTarget.querySelectorAll<HTMLDetailsElement>('.topic-questions-disclosure').forEach(list=>{list.open=false;}); if (!query) toggleBranch(node.id, event.currentTarget.open); }}><summary>{recent&&<span className="recent-topic-label" role="note">Вы только что занимались этой подтемой</span>}<span className="library-node-title"><SearchText text={node.label_ru} query={query} enabled={node.parent_id?searchScope.subtopics:searchScope.topics}/></span>{children.length ? <span className="topic-counts"><span>Тем: {children.length}</span><span>Пройдено: {summaries ? children.filter((child) => summaries[child.id]?.completed && !summaries[child.id]?.new_count).length : '…'}</span></span> : <TopicStatistics stats={stats} total={count} onReview={(parent) => openTopic(node.id, undefined, { reviewParent: parent })} />}</summary>
       <div className="library-children">{!children.length && count > 0 && <div className="topic-start-actions"><div className="topic-start-primary"><button type="button" className="primary library-start" disabled={!stats} onClick={() => {
+        if(continuation?.target==='repeat'&&hasErrors){openTopic(node.id,undefined,{reviewParent:-1});return;}
         if(continuation?.target==='repeat'){void repeatTopic(node.id);return;}
         openTopic(node.id,undefined,continuation?.target==='new'?{newQuestions:true}:undefined);
-      }}>{continuation?.target==='repeat'?'Пройти тему снова':continuation?.target==='new'?'Пройти новые вопросы':'Продолжить тему'}</button>{continuation&&<span className="topic-continuation-chip" tabIndex={0} title={continuation.tooltip} aria-label={`${continuation.label}. ${continuation.tooltip}`}>{continuation.label}</span>}{reviewState.completed && <span className="topic-review-completed">✓ Работа над ошибками выполнена</span>}</div>
-      {pendingReview&&<button type="button" className="repeat-full-topic" onClick={()=>openTopic(node.id,undefined,{reviewParent:pendingReview.id})}>{pendingReview.review?'Продолжить работу над ошибками':'Повторить вопросы с ошибками'}</button>}
+      }}>{continuation?.target==='repeat'?(hasErrors?'Работа над ошибками':'Пройти тему снова'):continuation?.target==='new'?'Пройти новые вопросы':'Продолжить тему'}</button>{continuation&&<span className="topic-continuation-chip" tabIndex={0} title={chipTooltip} aria-label={`${chipLabel}. ${chipTooltip}`}>{chipLabel}</span>}{!hasErrors&&reviewState.completed && <span className="topic-review-completed">✓ Работа над ошибками выполнена</span>}</div>
+      {hasErrors&&continuation?.target!=='repeat'&&<button type="button" className="repeat-full-topic" onClick={()=>openTopic(node.id,undefined,{reviewParent:-1})}>Работа над ошибками · {stats?.wrong}</button>}
 </div>}{children.map(child=>topic(child,titleMatch))}{!children.length && count>0 && <TopicQuestionList>{questionList(own, true, node,titleMatch)}</TopicQuestionList>}{!count && <p className="library-empty">Вопросы появятся по мере пополнения коллекции.</p>}</div>
     </details>;
   }
@@ -1033,7 +1038,7 @@ function AnswerResult({ correct, letter, onHelp }: { correct: boolean; letter: s
 }
 
 function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, runId, path, sectionNavigation, onQuestion, onBack, onFinish }: {
-  topicId: string; initialQuestion?: string; reviewParent?: number; newQuestions?: boolean; runId?: number; path: string; sectionNavigation: React.ReactNode; onQuestion: (question: string, replace?: boolean, runId?: number) => void; onBack: () => void; onFinish: (question: string) => void;
+  topicId: string; initialQuestion?: string; reviewParent?: number; newQuestions?: boolean; runId?: number; path: string; sectionNavigation: React.ReactNode; onQuestion: (question: string, replace?: boolean, runId?: number, reviewParent?: number) => void; onBack: () => void; onFinish: (question: string) => void;
 }) {
   const [requestedQuestion] = useState(initialQuestion);
   const [topic, setTopic] = useState<TopicRecord | null>(null);
@@ -1051,7 +1056,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   useEffect(() => {
     let active = true;
     void (async () => {
-      const review = reviewParent ? await api<{ id: number }>(`/api/topics/${encodeURIComponent(topicId)}/reviews/${reviewParent}`, { method: 'POST' }) : undefined;
+      const review = reviewParent && reviewParent < -1 ? {id:-reviewParent} : reviewParent ? await api<{ id: number }>(`/api/topics/${encodeURIComponent(topicId)}/${reviewParent===-1?'error-reviews':`reviews/${reviewParent}`}`, { method: 'POST' }) : undefined;
       const newRun = newQuestions && !review ? await api<{ id: number }>(`/api/topics/${encodeURIComponent(topicId)}/new`, { method: 'POST' }) : undefined;
       const requestedRun = newRun?.id ?? runId;
       const loaded = await api<TopicRecord>(`/api/topics/${encodeURIComponent(topicId)}${review ? `?review=${review.id}` : requestedRun ? `?run=${requestedRun}` : ''}`);
@@ -1069,8 +1074,8 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
   useEffect(() => {
     if (!topic) return;
     const requested = topic.questions.findIndex((item) => item.id === initialQuestion);
-    if (requested < 0 && topic.questions[position]) onQuestion(topic.questions[position].id, true, reviewParent ? undefined : topic.run_id);
-  }, [initialQuestion, topic, position, onQuestion, reviewParent]);
+    if ((requested < 0 || reviewParent===-1) && topic.questions[position]) onQuestion(topic.questions[position].id, true, reviewParent ? undefined : topic.run_id, reviewParent===-1&&reviewID?-reviewID:undefined);
+  }, [initialQuestion, topic, position, onQuestion, reviewParent, reviewID]);
   useEffect(() => { panel.current?.scrollTo({ top: 0 }); panel.current?.parentElement?.scrollTo({ top: 0 }); }, [position]);
   useEffect(() => {
     function close(event: KeyboardEvent) { if (event.key === 'Escape') setMenuOpen(false); }
@@ -1104,7 +1109,7 @@ function TopicTrainer({ topicId, initialQuestion, reviewParent, newQuestions, ru
     <button className="library-back topic-back" type="button" disabled={busy} onClick={onBack}>‹ Панель обучения</button>
     <main className="app-shell topic-shell">
       <header className="topbar topic-topbar">
-        <div className="title-block"><TopicHeading section={sectionNavigation} title={topic.title} />{filteredRun && <p className="review-mode-label">{reviewParent ? 'Работа над ошибками · исходный результат сохранён' : 'Новые вопросы · отдельное прохождение'}</p>}</div>
+        <div className="title-block"><TopicHeading section={sectionNavigation} title={topic.title} />{filteredRun && <p className="review-mode-label">{reviewParent ? 'Работа над ошибками · исправьте неверные ответы' : 'Новые вопросы · отдельное прохождение'}</p>}</div>
         <div className="header-tools">
           <div className="ticket-menu-shell topic-menu-shell">
             <button type="button" className="ticket-menu-trigger" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span className="ticket-menu-trigger-copy"><span className="ticket-menu-trigger-label">Текущий вопрос</span><span className="ticket-menu-trigger-title">Вопрос {q.number} из {topic.numbering_total??total}</span></span><span className="ticket-menu-chevron">⌄</span></button>
@@ -1157,8 +1162,8 @@ function TrainerApp() {
   };
   const activeTopic = route.screen === 'topic' ? route : null;
   const setActiveTopic = (value: ({ id: string; question?: string } & TopicLaunch) | null) => navigate(value ? { screen: 'topic', ...value } : { screen: 'home' });
-  const onTopicQuestion = useCallback((question: string, replace = false, runId?: number) => {
-    if (route.screen === 'topic') navigate({ ...route, question, runId: runId ?? route.runId }, replace);
+  const onTopicQuestion = useCallback((question: string, replace = false, runId?: number, reviewParent?:number) => {
+    if (route.screen === 'topic') navigate({ ...route, question, runId: runId ?? route.runId, reviewParent:reviewParent??route.reviewParent }, replace);
   }, [route, navigate]);
   const [library, setLibrary] = useState<LibraryData | null>(null);
   useEffect(()=>{

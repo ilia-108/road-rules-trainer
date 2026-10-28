@@ -117,8 +117,8 @@ func TestTopicRunHistoryAndIsolatedReviews(t *testing.T) {
 		Runs    []topicRunSummary `json:"runs"`
 	}
 	json.Unmarshal(res.Body.Bytes(), &summaries)
-	if summaries["routine.drugs"].Wrong != 1 || summaries["routine.drugs"].Correct != len(members)-1 || len(summaries["routine.drugs"].Runs) != 1 {
-		t.Fatal("review overwrote main statistics")
+	if summaries["routine.drugs"].Wrong != 0 || summaries["routine.drugs"].Correct != len(members) || len(summaries["routine.drugs"].Runs) != 1 {
+		t.Fatal("corrected current results or preserved history are incorrect")
 	}
 	// Repeat the full topic while keeping the prior run and its review available.
 	res = request(t, handler, "POST", path+"/reset", "", cookie)
