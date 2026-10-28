@@ -54,3 +54,18 @@ test('new-only chip includes its count with Russian plural forms',()=>{
   assert.equal(state.label,`Тема пройдена · ${label}`);assert.match(state.tooltip,/Пройти новые вопросы/);
  }
 });
+
+test('reviewed event inherited by the full run does not invite another review',()=>{
+ const state=topicReviewState([
+  {...run(2,'new',{completed_at:'2026-10-28T14:13:00Z'}),review_pending:0},
+  {...run(1),review_pending:0},
+ ]);
+ assert.equal(state.pending,undefined);assert.equal(state.completed,true);
+});
+test('unrelated errors still require review after an inherited duplicate is covered',()=>{
+ const state=topicReviewState([
+  {...run(2,'new',{completed_at:'2026-10-28T14:13:00Z'}),review_pending:0},
+  {...run(1),review_pending:1},
+ ]);
+ assert.equal(state.pending.id,1);assert.equal(state.completed,false);
+});

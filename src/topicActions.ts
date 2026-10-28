@@ -2,6 +2,7 @@ type ReviewRun = {
  id:number;
  kind:'full'|'new';
  wrong:number;
+ review_pending?:number;
  completed_at:string|null;
  review?:{completed_at:string|null};
 };
@@ -10,8 +11,9 @@ type ReviewRun = {
 export function topicReviewState<T extends ReviewRun>(runs:T[]) {
  const full=runs.find(run=>run.kind==='full');
  const failed=runs.filter(run=>run.id>=(full?.id??0)&&run.completed_at&&run.wrong>0);
- const pending=failed.find(run=>run.review&&!run.review.completed_at)??failed.find(run=>!run.review);
- return {pending,completed:failed.length>0&&failed.every(run=>Boolean(run.review?.completed_at))};
+ const outstanding=failed.filter(run=>(run.review_pending??(run.review?.completed_at?0:run.wrong))>0);
+ const pending=outstanding.find(run=>run.review&&!run.review.completed_at)??outstanding.find(run=>!run.review);
+ return {pending,completed:failed.length>0&&outstanding.length===0};
 }
 
 type ContinuationProgress={remaining:number;new_count:number;total:number;answered:number;next_question:number};

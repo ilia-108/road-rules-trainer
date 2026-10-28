@@ -9,16 +9,17 @@ import (
 )
 
 type topicRunSummary struct {
-	Kind        string           `json:"kind"`
-	ID          int64            `json:"id"`
-	Total       int              `json:"total"`
-	Answered    int              `json:"answered"`
-	Correct     int              `json:"correct"`
-	Wrong       int              `json:"wrong"`
-	Inherited   int              `json:"inherited"`
-	StartedAt   string           `json:"started_at"`
-	CompletedAt *string          `json:"completed_at"`
-	Review      *topicRunSummary `json:"review,omitempty"`
+	Kind          string           `json:"kind"`
+	ID            int64            `json:"id"`
+	Total         int              `json:"total"`
+	Answered      int              `json:"answered"`
+	Correct       int              `json:"correct"`
+	Wrong         int              `json:"wrong"`
+	ReviewPending int              `json:"review_pending"`
+	Inherited     int              `json:"inherited"`
+	StartedAt     string           `json:"started_at"`
+	CompletedAt   *string          `json:"completed_at"`
+	Review        *topicRunSummary `json:"review,omitempty"`
 }
 
 // The legacy current-answer snapshot remains intact; copy it once into history.
@@ -71,8 +72,22 @@ func (app *App) currentTopicRun(userID, topicID string, members []topicReference
 	}
 	return id, tx.Commit()
 }
+
+// Match the original answer event, not just its question: later mistakes and
+// fresh full repeats must still require their own review. Inherited copies of
+// the same event are covered by a single review within this topic cycle.
+const uncoveredTopicError = `NOT EXISTS (
+ SELECT 1 FROM topic_runs review JOIN topic_run_answers fixed ON fixed.run_id=review.id
+ WHERE review.user_id=r.user_id AND review.topic_id=r.topic_id AND review.parent_id IS NOT NULL
+ AND fixed.content_id=a.content_id
+ AND julianday(fixed.answered_at)>=julianday(a.answered_at)
+ AND julianday(review.started_at)>=julianday(a.answered_at)
+ AND (SELECT MAX(f.id) FROM topic_runs f WHERE f.user_id=r.user_id AND f.topic_id=r.topic_id AND f.parent_id IS NULL AND f.kind='full' AND f.id<=review.parent_id)
+ = (SELECT MAX(f.id) FROM topic_runs f WHERE f.user_id=r.user_id AND f.topic_id=r.topic_id AND f.parent_id IS NULL AND f.kind='full' AND f.id<=r.id)
+)`
+
 func (app *App) topicHistory(userID, topicID string) ([]topicRunSummary, error) {
-	rows, err := app.db.Query(`SELECT r.kind,r.id,r.parent_id,r.total,r.started_at,r.completed_at,COUNT(a.content_id),COALESCE(SUM(a.correct),0),COALESCE(SUM(a.inherited),0) FROM topic_runs r LEFT JOIN topic_run_progress a ON a.run_id=r.id WHERE r.user_id=? AND r.topic_id=? GROUP BY r.id ORDER BY r.id DESC`, userID, topicID)
+	rows, err := app.db.Query(`SELECT r.kind,r.id,r.parent_id,r.total,r.started_at,r.completed_at,COUNT(a.content_id),COALESCE(SUM(a.correct),0),COALESCE(SUM(a.inherited),0),(SELECT COUNT(*) FROM topic_run_progress a WHERE a.run_id=r.id AND a.correct=0 AND `+uncoveredTopicError+`) FROM topic_runs r LEFT JOIN topic_run_progress a ON a.run_id=r.id WHERE r.user_id=? AND r.topic_id=? GROUP BY r.id ORDER BY r.id DESC`, userID, topicID)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +97,7 @@ func (app *App) topicHistory(userID, topicID string) ([]topicRunSummary, error) 
 	for rows.Next() {
 		var item topicRunSummary
 		var parent sql.NullInt64
-		if err := rows.Scan(&item.Kind, &item.ID, &parent, &item.Total, &item.StartedAt, &item.CompletedAt, &item.Answered, &item.Correct, &item.Inherited); err != nil {
+		if err := rows.Scan(&item.Kind, &item.ID, &parent, &item.Total, &item.StartedAt, &item.CompletedAt, &item.Answered, &item.Correct, &item.Inherited, &item.ReviewPending); err != nil {
 			return nil, err
 		}
 		item.Wrong = item.Answered - item.Correct
@@ -128,6 +143,22 @@ func (app *App) startTopicReview(w http.ResponseWriter, r *http.Request) {
 		app.writeError(w, 409, "Работа над ошибками доступна после завершения темы с ошибками")
 		return
 	}
+	var existing int64
+	err = tx.QueryRow(`SELECT id FROM topic_runs WHERE parent_id=?`, parent).Scan(&existing)
+	if err != nil && err != sql.ErrNoRows {
+		app.serverError(w, err)
+		return
+	}
+	if existing == 0 {
+		if err = tx.QueryRow(`SELECT COUNT(*) FROM topic_runs r JOIN topic_run_progress a ON a.run_id=r.id WHERE r.id=? AND a.correct=0 AND `+uncoveredTopicError, parent).Scan(&wrong); err != nil {
+			app.serverError(w, err)
+			return
+		}
+		if wrong == 0 {
+			app.writeError(w, 409, "Работа над этими ошибками уже выполнена")
+			return
+		}
+	}
 	_, err = tx.Exec(`INSERT INTO topic_runs(user_id,topic_id,parent_id,total,started_at) VALUES(?,?,?,?,?) ON CONFLICT DO NOTHING`, userID, topicID, parent, wrong, time.Now().UTC().Format(time.RFC3339Nano))
 	if err != nil {
 		app.serverError(w, err)
@@ -139,6 +170,13 @@ func (app *App) startTopicReview(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+	if existing == 0 {
+		_, err = tx.Exec(`INSERT INTO topic_run_members SELECT ?,a.content_id FROM topic_runs r JOIN topic_run_progress a ON a.run_id=r.id WHERE r.id=? AND a.correct=0 AND `+uncoveredTopicError, id, parent)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+	}
 	if err = tx.Commit(); err != nil {
 		app.serverError(w, err)
 		return
@@ -146,7 +184,9 @@ func (app *App) startTopicReview(w http.ResponseWriter, r *http.Request) {
 	app.writeJSON(w, 200, map[string]int64{"id": id})
 }
 func (app *App) reviewMembers(userID, topicID string, id int64, members []topicReference) ([]topicReference, error) {
-	rows, err := app.db.Query(`SELECT a.content_id FROM topic_runs r JOIN topic_run_progress a ON a.run_id=r.parent_id WHERE r.id=? AND r.user_id=? AND r.topic_id=? AND a.correct=0`, id, userID, topicID)
+	rows, err := app.db.Query(`SELECT a.content_id FROM topic_runs r JOIN topic_run_progress a ON a.run_id=r.parent_id WHERE r.id=? AND r.user_id=? AND r.topic_id=? AND a.correct=0
+ AND (NOT EXISTS(SELECT 1 FROM topic_run_members WHERE run_id=r.id)
+ OR EXISTS(SELECT 1 FROM topic_run_members m WHERE m.run_id=r.id AND m.content_id=a.content_id))`, id, userID, topicID)
 	if err != nil {
 		return nil, err
 	}

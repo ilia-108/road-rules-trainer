@@ -750,7 +750,7 @@ type LibraryQuestion = { canonical_id: string; test_id: number; source_test_id: 
 type TopicNode = { id: string; label_ru: string; parent_id: string | null };
 type LibraryData = { nodes: TopicNode[]; questions: LibraryQuestion[] };
 
-type TopicRun = { inherited?: number; kind: 'full' | 'new'; id: number; total: number; answered: number; correct: number; wrong: number; started_at: string; completed_at: string | null; review?: TopicRun };
+type TopicRun = { review_pending?: number; inherited?: number; kind: 'full' | 'new'; id: number; total: number; answered: number; correct: number; wrong: number; started_at: string; completed_at: string | null; review?: TopicRun };
 type TopicLaunch = { reviewParent?: number; newQuestions?: boolean; runId?: number };
 type TopicSummary = { remaining: number; repeat_in_progress?: boolean; new_count: number; new_question_ids: string[]; question_runs: Record<string, number>; completed: boolean; runs: TopicRun[]; total: number; answered: number; correct: number; wrong: number; next_question: number; results: Record<string, boolean> };
 
