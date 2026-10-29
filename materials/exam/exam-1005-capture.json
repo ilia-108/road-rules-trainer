@@ -1,0 +1,1289 @@
+{
+  "source": "",
+  "collection": "Exam collection",
+  "collection_type": "exam",
+  "source_test_id": 1005,
+  "status": "captured",
+  "portal_result": {
+    "correct": 30,
+    "wrong": 0,
+    "unanswered": 0
+  },
+  "questions": [
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Sí, en cualquier caso.\nYes, always.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "No, aunque por cortesía se les puede ceder el paso.\nNo, although you can give way to them out of courtesy.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Sí, solamente en vías urbanas.\nYes, only on urban roads.",
+          "correct": false
+        }
+      ],
+      "image_url": "283a3e2f-7ad9-458d-9bfc-ee13650f5abcM.jpg",
+      "number": "1.",
+      "question": "En los pasos para peatones no regulados por semáforo o agente, ¿tienen preferencia los peatones?\nOn pedestrian crossings with no traffic lights or traffic officers, do pedestrians have priority?",
+      "source_ordinal": 1,
+      "canonical_id": "3f07c534d6bcb27d07967747",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:01",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Priorities, level crossings and tunnels  \n   \n3 Cyclists, pedestrians and animals  \n3.3 Pedestrians\nDrivers / riders must accord right of way (priority of passage) to pedestrians in the following cases:\nOn pedestrian crossings, on pavements and in other pedestrian areas.\nWhen the driver turns into another road and there is a pedestrian crossing the road at the junction, even if there isn’ an approved pedestrian crossing marked at this location.\n(Página 206 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\">Priorities, level crossings and tunnels &nbsp;</div><div class=\"normal\">&nbsp; &nbsp;</div><div class=\"normal\"><u><b>3 Cyclists, pedestrians and animals</b></u> &nbsp;</div><div class=\"normal\"><u>3.3 Pedestrians</u></div><div class=\"normal\">Drivers / riders must accord right of way (priority of passage) to pedestrians in the following cases:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\">On <b>pedestrian crossings, </b>on <b>pavements </b>and in other <b>pedestrian areas.</b></li><li class=\"normal\">When the driver <b>turns into another road</b> and there is <b>a pedestrian crossing the road</b> at the junction, <b>even if there isn’ an approved pedestrian crossing</b> marked at this location.</li></ul>(Página 206 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q01.jpg",
+      "topic_ids": [
+        "driving.pedestrians",
+        "priority.general"
+      ],
+      "primary_topic_id": "driving.pedestrians",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Pedestrian priority at an uncontrolled crossing is tested, not traffic-light operation.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Sí.\nYes.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "Sí, pero su uso es opcional.\nYes, but it is optional.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "No, solo puede utilizarse con niebla densa o fuerte nevada.\nNo. They can only be used in thick fog or a heavy snowfall.",
+          "correct": false
+        }
+      ],
+      "image_url": "d1bd4729-30eb-44c8-bff8-026bc89cce7aM.jpg",
+      "number": "2.",
+      "question": "Circulando con lluvia muy intensa, ¿es correcto encender la luz antiniebla trasera?\nIs it correct to turn on the rear fog lights when driving in very heavy rain?",
+      "source_ordinal": 2,
+      "canonical_id": "62582cde57f62528964ac3db",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:02",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "11 Rear fog light(s)\n \n11.2 Use of the rear fog light\nIt is only permissible to use the rear fog light when the environmental and meteorological conditions cause visibility to be seriously reduced. It is not permitted to use the rear fog lights under any other circumstances.\n(Página 103 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>11 Rear fog light(s)</b></div><div class=\"normal\">&nbsp;</div><div class=\"normal\"><u><b>11.2 Use of the rear fog light</b></u></div><div class=\"normal\">It is only permissible to use the rear fog light when the environmental and meteorological conditions cause visibility to be <b>seriously reduced</b>. It is not permitted to use the rear fog lights under any other circumstances.</div>(Página 103 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q02.jpg",
+      "topic_ids": [
+        "vehicle.lights",
+        "driving.weather"
+      ],
+      "primary_topic_id": "vehicle.lights",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Rear fog lamp use in very heavy rain is tested; fog itself is not the condition asked about.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Sí.\nYes.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "No, con una vez cada dos o tres años es suficiente.\nNo, once every two or three years is sufficient.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "No, solo es necesario cambiar las bombillas cuando estén fundidas.\nNo. It is only necessary to change the light bulbs when they break.",
+          "correct": false
+        }
+      ],
+      "image_url": "501605c7-39fd-4936-8598-dd369710d8b3M.jpg",
+      "number": "3.",
+      "question": "La regulación, el funcionamiento y el estado del sistema de alumbrado, ¿hay que revisarlos con frecuencia?\nShould the adjustment, the working and the condition of the lighting system be revised frequently?",
+      "source_ordinal": 3,
+      "canonical_id": "68ec23cbcbe86c31dbda0fe2",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:03",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "ACTIVE SAFETY FEATURES\n \n2 Lighting systems\nThe functions of the lights on the vehicle are to see and be seen.\nThe lighting system allows the driver, in low lighting conditions, to illuminate the roadway in order to view the road and monitor the traffic. In doing so the driver can see any potential hazard in time to react. For this reason, there is a need to frequently check the lighting system so as to ensure compliance with the lighting regulations and operational use. (Lights and bulbs should be checked to ensure they are working correctly. Make sure that the lights are not dirty or broken, etc.)\nThe duration of the bulbs (both conventional and halogen) depends on the evaporation of the filament. That’s why it is recommended, that if one needs replacing, the other one should be changed, too.\n(Página 62 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>ACTIVE SAFETY FEATURES</b></div><div class=\"normal\"><b>&nbsp;</b></div><div class=\"normal\"><u><b>2 Lighting systems</b></u></div><div class=\"normal\">The functions of the lights on the vehicle are to <b>see and be seen.</b></div><div class=\"normal\">The lighting system allows the driver, in low lighting conditions, to <b>illuminate </b>the roadway in order to view the road and <b>monitor the traffic</b>. In doing so the driver can see any <b>potential hazard </b>in time to react. For this reason, there is a need to frequently check the lighting system so as to ensure compliance with the lighting <b>regulations and operational use</b>. (Lights and bulbs should be checked to ensure they are working correctly. Make sure that the lights are not dirty or broken, etc.)</div><div class=\"normal\">The <b>duration </b>of the <b>bulbs </b>(both conventional and halogen) depends on the <b>evaporation of the filament</b>. That’s why it <b>is recommended</b>, that if one needs replacing, the <b>other one should be changed</b>, too.</div>(Página 62 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q03.jpg",
+      "topic_ids": [
+        "vehicle.lights"
+      ],
+      "primary_topic_id": "vehicle.lights",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Frequent checking of light adjustment, operation and condition is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "los turismos con remolque.\nprivate cars with trailers.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "los vehículos para personas de movilidad reducida.\nvehicles for persons with reduced mobility.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "cualquier vehículo en supuestos de tráfico denso.\nany vehicle during heavy traffic.",
+          "correct": false
+        }
+      ],
+      "image_url": "15859189-e95f-4c94-9231-55ba95f74deaM.jpg",
+      "number": "4.",
+      "question": "Si no existe vía o parte de ella que les esté especialmente destinada, circularán por el arcén...\nIf there is no road or part of it that is specially destined to these vehicles, the hard shoulder will be used by…",
+      "source_ordinal": 4,
+      "canonical_id": "ecd62c80524ee22a55e5004d",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:04",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "9 Hard shoulders  \n \nOn some roadways there is an area that runs parallel to the main carriageway, this is called the ‘hard shoulder.’\nThe following must travel on the hard shoulder, on the right going with the traffic flow, (unless there is a road or part of it specifically designated for their use:\nVehicles pulled by animals.\nSpecial vehicles with a MAM not exceeding 3,500 kg’.\nCycles.\nVehicles following cyclists.\nMopeds.\nVehicles for people with reduced mobility.\nHowever the hard shoulder must be useable. When the road does not have a hard shoulder or it is not useable or sufficient, for instance it is not wide enough, these users must travel as close as possible to the right edge of the roadway, occupying as little as possible of the roadway.\n(Página 168 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>9 Hard shoulders</b> &nbsp;</div><div class=\"normal\"><b>&nbsp;</b></div><div class=\"normal\">On some roadways there is an area that runs parallel to the main carriageway, this is called the ‘hard shoulder.’</div><div class=\"normal\">The following must travel on the hard shoulder, on the right going with the traffic flow, (unless there is a road or part of it specifically designated for their use:</div><div class=\"normal\">Vehicles pulled by animals.</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\">Special vehicles with a MAM not exceeding 3,500 kg’.</li><li class=\"normal\">Cycles.</li><li class=\"normal\">Vehicles following cyclists.</li><li class=\"normal\">Mopeds.</li><li class=\"normal\">Vehicles for people with reduced mobility.</li></ul><div class=\"normal\" style=\"margin-left:0.00in;\">However the hard shoulder must be useable. When the road does not have a hard shoulder or it is <b>not useable</b> or <b>sufficient</b>, for instance it is not wide enough, these users must travel as close as possible <b>to the right edge of the roadway</b>, occupying as little as possible of the roadway. </div>(Página 168 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q04.jpg",
+      "topic_ids": [
+        "driving.lanes"
+      ],
+      "primary_topic_id": "driving.lanes",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Which road users must use the shoulder when no dedicated route exists is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Sí, pero solo de noche.\nYes, but just at night.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "No, nunca.\nNo, never.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Sí, en todo caso.\nYes, always.",
+          "correct": true
+        }
+      ],
+      "image_url": "0fa3661a-06f5-4a97-a850-4fb9732fa326M.jpg",
+      "number": "5.",
+      "question": "En condiciones climatológicas adversas, ¿debe aumentarse la distancia de seguridad?\nMust you increase the safety distance during adverse climate conditions?",
+      "source_ordinal": 5,
+      "canonical_id": "c684cecdfbdf05baa9905bb6",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:05",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Journeys and defensive and efficient driving        \n         \nDEFENSIVE DRIVING  \n6 Maintaining space\n6.1 Travelling\n6.1.1 Space to the front\nHowever, under certain circumstances, this interval should be increased for safety reasons by at least one second more, namely:\nWhen driving in adverse environmental conditions (like rain or at night).\nWhen the state of the driver is not the most conducive to safe driving, for example, if the driver is tired or sleepy.\nWhen the vehicle behind is approaching very fast.\n(Página 273 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><i>Journeys and defensive and efficient driving</i> &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\"><b>DEFENSIVE DRIVING</b> &nbsp;</div><div class=\"normal\"><b>6 Maintaining space</b> </div><div class=\"normal\"><u><b>6.1 Travelling</b></u> </div><div class=\"normal\"><u>6.1.1 Space to the front</u></div><div class=\"normal\">However, under certain circumstances, this interval should be increased for safety reasons by at <b>least one second more,</b> namely:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\">When driving in <b>adverse environmental conditions</b> (like rain or at night).</li><li class=\"normal\">When the <b>state of the driver</b> is not the most conducive to safe driving, for example, if the driver is tired or sleepy.</li><li class=\"normal\">When the vehicle <b>behind is approaching very fast.</b></li></ul>(Página 273 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q05.jpg",
+      "topic_ids": [
+        "numbers.distances"
+      ],
+      "primary_topic_id": "numbers.distances",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Increasing the following distance in adverse conditions is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Prohibido girar a la izquierda, solamente.\nProhibited to turn left, only.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "Prohibido girar a la izquierda y a la derecha.\nProhibited to turn left and right.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Prohibido girar a la izquierda y cambiar el sentido de la marcha.\nProhibited to turn left and do a U-turn.",
+          "correct": true
+        }
+      ],
+      "image_url": "bf65ad66-b259-4197-9ab7-c0ca2cad85c1M.jpg",
+      "number": "6.",
+      "question": "Esta señal, ¿qué indica?\nWhat does this sign mean?",
+      "source_ordinal": 6,
+      "canonical_id": "e7467c1891e34539f6e17127",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:06",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "5 Vertical Signs                              \n                           \n5.3 Regulation road signs\n5.3.5 Other signs relating to prohibition or restriction\nR-303 No left turn\nProhibition to turn left. It also forbids U-turns.\n(It forbids changing your course direction).\n(Página 126 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>5 Vertical Signs</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"normal\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><u><b>5.3 Regulation road signs</b></u> </div><div class=\"normal\"><u>5.3.5 Other signs relating to prohibition or restriction</u> </div><div class=\"normal\"><b>R-303 No left turn</b></div><div class=\"normal\">Prohibition to turn left. It also forbids U-turns.</div><div class=\"normal\">(It forbids changing your course direction).</div>(Página 126 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q06.jpg",
+      "topic_ids": [
+        "signs.restrictions",
+        "driving.turns",
+        "driving.uturns"
+      ],
+      "primary_topic_id": "signs.restrictions",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The no-left-turn sign also prohibits U-turns; both manoeuvres are directly tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "No, porque el conductor no es el responsable del mantenimiento del vehículo.\nNo, because the driver is not responsible for the maintenance of the vehicle.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "Sí, en cierto modo, porque el estado del vehículo depende de él.\nYes, to a certain extent, because the condition of the vehicle is his responsibility.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "No, un fallo mecánico es siempre imprevisible e inevitable.\nNo. A mechanical failure is always unpredictable and unavoidable.",
+          "correct": false
+        }
+      ],
+      "image_url": "027b565d-ff5f-4f9c-b344-6879e9d36c28M.jpg",
+      "number": "7.",
+      "question": "¿Puede evitar el conductor un accidente debido al estado del vehículo?\nCan a driver avoid an accident due to the condition of his vehicle?",
+      "source_ordinal": 7,
+      "canonical_id": "3c5588446dc2f5ce158553d3",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:07",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Road traffic collisions      \n     \n2 Road traffic collisions can be avoided  \n2.3 The key: Reducing the risk\nIt is also possible to avoid many of the risk factors that are connected with the vehicle, the road or the environment.\nIn many collisions, the driver claims that the vehicle or road was an associated or main factor but the simple truth is that the driver could have behaved in a different way that would have avoided a collision. For example, if the driver had realised that the tyres were defective (by maintenance and inspection) they could have avoided the puncture (blow out) or if they had adopted an adequate speed and a safe distance when driving in the rain or snow, they could have avoided running into the vehicle ahead of them.\nProper maintenance and responsible driving reduces the chances that a “vehicle factor” or a “road factor” will be a cause of a collision.\n(Página 250 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>Road traffic collisions</b> &nbsp; &nbsp; &nbsp; </div><div class=\"normal\">&nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><u><b>2 Road traffic collisions can be avoided</b> &nbsp;</u> </div><div class=\"normal\"><u>2.3 The key: Reducing the risk</u></div><div class=\"normal\">It is also possible to avoid many of the risk factors that are connected with the vehicle, the road or the environment.</div><div class=\"normal\">In many collisions, the driver claims that the vehicle or road was an associated or main factor but the simple truth is that the driver could have behaved in a different way that would have avoided a collision. For example, if the driver had realised that the tyres were defective (by maintenance and inspection) they could have avoided the puncture (blow out) or if they had adopted an adequate speed and a safe distance when driving in the rain or snow, they could have avoided running into the vehicle ahead of them.</div><div class=\"normal\">Proper maintenance and responsible driving reduces the chances that a “vehicle factor” or a “road factor” will be a cause of a collision.</div>(Página 250 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q07.jpg",
+      "topic_ids": [
+        "vehicle.mechanics",
+        "routine.safety"
+      ],
+      "primary_topic_id": "vehicle.mechanics",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "A driver's responsibility for maintenance and prevention of mechanical-failure crashes is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "La velocidad media aumenta, incluso con el dispositivo de manos libres.\nThe average speed increases, even when using the hands free device.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "El conductor deja de percibir una parte importante de las señales, incluso con el dispositivo de manos libres.\nThe driver often misses traffic signs, even when he is using the hands free device.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "El conductor no deja de percibir las señales si usa el dispositivo de manos libres.\nThe driver doesn’t miss any traffic signs if he is using the hands free device.",
+          "correct": false
+        }
+      ],
+      "image_url": "78bf9403-8604-44a0-ad49-456fccf6180fM.jpg",
+      "number": "8.",
+      "question": "¿Qué efectos tiene en la conducción una conversación por el móvil que supere el minuto y medio?\nWhat effect does a conversation by mobile phone lasting one and a half minutes have on driving?",
+      "source_ordinal": 8,
+      "canonical_id": "6eeceb1263b22678f4cbb3a5",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:08",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "DISTRACTIONS    \n   \n8.1 Circumstances of collisions due to phone use\nResearch indicates that there are four moments especially dangerous when using a mobile phone whilst driving:\nWhilst speaking. Even with a hand free set, the first minute and a half of the conversation requires a high degree of focus and attention. After this time the driver fails to receive 40% of road signals and information and their average speed is reduced by 12% however they also take longer to react to a hazard or event.\nWhen terminating a call. The effect is worsened when the driver continues to think about the conversation. Normally, it takes some time for the driver’ concentration to return fully to driving and monitoring the traffic and environment.\n(Página 36 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\" style=\"margin-left:0.00in;margin-right:0.00in;\"><b>DISTRACTIONS</b> &nbsp; &nbsp; </div><div class=\"normal\" style=\"margin-left:0.00in;margin-right:0.00in;\">&nbsp; &nbsp; </div><div class=\"normal\"><u><b>8.1 Circumstances of collisions due to phone use</b></u></div><div class=\"normal\">Research indicates that there are <b>four moments</b> especially dangerous when using a mobile phone whilst driving:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\"><b>Whilst speaking. </b>Even with a hand free set, the first minute and a half of the conversation requires a high degree of focus and attention. After this time the driver fails to receive 40% of road signals and information and their average speed is reduced by 12% however they also take longer to react to a hazard or event.</li><li class=\"normal\"><b>When terminating a call. </b>The effect is worsened when the driver continues to think about the conversation. Normally, it takes some time for the driver’ concentration to return fully to driving and monitoring the traffic and environment.</li></ul><div class=\"normal\"></div>(Página 36 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q08.jpg",
+      "topic_ids": [
+        "routine.distraction"
+      ],
+      "primary_topic_id": "routine.distraction",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "A prolonged phone conversation reduces perception of signs even with hands-free equipment.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "No, como norma general.\nNo, not as a general rule.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "Sí, siempre que lleven un casco debidamente homologado.\nYes, provided that they wear an authorised helmet.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Sí, en cualquier caso.\nYes, always.",
+          "correct": false
+        }
+      ],
+      "image_url": "c1385959-bab3-4bb9-a55d-3b8d001bafa9M.jpg",
+      "number": "9.",
+      "question": "Los niños menores de doce años, ¿pueden viajar como pasajeros en las motocicletas?\nAre children under the age of twelve permitted to travel as passengers of a motorcycle?",
+      "source_ordinal": 9,
+      "canonical_id": "c77c49f61650f26f0f1dff47",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:09",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Transporting people and loads  \n   \n2 Transporting people\n2.3 Cycles, mopeds and motorcycles\nMopeds and motorcycles\nIn addition to the driver and, where applicable, the occupant of the sidecar, a passenger may also travel on mopeds and motorcycles, when thus stated on the driving permit and meeting the following conditions:\nThe passenger is older than 12 years.\nThat they use the appropriate seat behind the driver. In no case can they ever sit between the driver and the steering handlebars of the motorbike or moped.\nThe passenger must sit astride the machine and place his feet on the footrests provided.\nThe passenger must wear an approved crash helmet.\n(Página 215 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\">Transporting people and loads &nbsp; </div><div class=\"normal\">&nbsp; &nbsp; </div><div class=\"normal\"><u><b>2 Transporting people</b></u> </div><div class=\"normal\"><u>2.3 Cycles, mopeds and motorcycles</u></div><div class=\"normal\">Mopeds and motorcycles</div><div class=\"normal\">In addition to the driver and, where applicable, the occupant of the sidecar, a passenger may also travel on <b>mopeds</b> and <b>motorcycles,</b> when <b>thus stated</b> on the driving permit and meeting the following conditions:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\">The passenger is <b>older than 12 years.</b></li><li class=\"normal\">That they use the appropriate seat <b>behind</b> the driver. In no case can they ever sit between the driver and the steering handlebars of the motorbike or moped.</li><li class=\"normal\">The passenger <b>must sit astride the machine</b> and <b>place his feet on the footrests provided.</b></li><li class=\"normal\">The passenger <b>must wear an approved crash helmet.</b></li></ul>(Página 215 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q09.jpg",
+      "topic_ids": [
+        "vehicle.passengers",
+        "vehicle.motorcycles"
+      ],
+      "primary_topic_id": "vehicle.passengers",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The minimum passenger age rule for motorcycles is tested, not helmet specification.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "cuando van solos.\nwhen they are alone.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "tanto cuando van solos como cuando van acompañados.\nwhen they are alone and when they are accompanied as well.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "cuando van acompañados.\nwhen they are accompanied.",
+          "correct": true
+        }
+      ],
+      "image_url": "8e8a4b26-0cb7-451e-80a4-97d05180327eM.jpg",
+      "number": "10.",
+      "question": "Los jóvenes suelen realizar más maniobras de riesgo…\nYoung people usually carry out risky manoeuvres…",
+      "source_ordinal": 10,
+      "canonical_id": "640bf45dfe396eea95d3c1a6",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:10",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Road traffic collisions              \n               \n6. Groups of drivers most at risk of a collision    \n6.1 The young  \n6.1.3 Major causes of youth collisions\nAdditionally, there are a number of personal characteristics that appear to be related to the propensity of certain young people to suffer a road collision, including:\nExhibitionist behaviour in groups, which leads them to perform manoeuvres that puts them at risk.\nThe acceptance of excessive risk, such as competitiveness (competing with other vehicles/drivers).\nThe excessive influence of advertising, chiefly those ads that clearly incite risk behaviour.\nThe limited ability to adequately assess the consequences of dangerous behaviour when driving and inappropriate behaviour are the main risks that cause traffic collisions amongst young people.\n(Página 254 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>Road traffic collisions</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><b>&nbsp;</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><b>6. Groups of drivers most at risk of a collision</b> &nbsp; &nbsp;</div><div class=\"normal\"><u><b>6.1 The young</b></u> &nbsp; </div><div class=\"normal\"><u>6.1.3 Major causes of youth collisions</u></div><div class=\"normal\">Additionally, there are a number of personal characteristics that appear to be related to the propensity of certain young people to suffer a road collision, including:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\"><b>Exhibitionist behaviour </b>in groups, which leads them to perform manoeuvres that puts them at risk.</li><li class=\"normal\">The <b>acceptance of excessive risk, </b>such as competitiveness (competing with other vehicles/drivers).</li><li class=\"normal\">The <b>excessive influence of advertising, </b>chiefly those ads that clearly incite risk behaviour.</li></ul><div class=\"normal\">The limited ability to <b>adequately assess the consequences of dangerous behaviour </b>when driving and <b>inappropriate behaviour </b>are the main risks that cause traffic collisions amongst young people.</div>(Página 254 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q10.jpg",
+      "topic_ids": [
+        "routine.emotions"
+      ],
+      "primary_topic_id": "routine.emotions",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Peer influence on young drivers' risk taking is tested, not temporary signs.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "puede hacerlo sin ocasionar peligro a otros usuarios de la vía, ayudándose de las indicaciones de otra persona, si fuera necesario.\nyou can carry out the manoeuvre without putting other road users in danger, and you can follow the instructions of another person, if necessary.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "no va a recorrer más de 50 metros.\nyou will not reverse more than 50 metres.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "tiene visibilidad suficiente, únicamente.\nyou have sufficient visibility, only.",
+          "correct": false
+        }
+      ],
+      "image_url": "2ac94312-52b3-4861-afa9-fcc99bdd4d4aM.jpg",
+      "number": "11.",
+      "question": "Debe comprobar antes de circular marcha atrás que…\nYou must check before reversing that…",
+      "source_ordinal": 11,
+      "canonical_id": "312d562e0dbe910991897899",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:11",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Maneouvres          \n   \n8 Reversing\nBefore starting to reverse, the driver must make sure that it is safe to do so. This may mean getting out of the vehicle and checking around the vicinity or preferably reversing under the supervision and assistance of another person, who will act to guide the driver backwards. It is always necessary to take into consideration the space you are reversing into, the circumstances and the movement of others.\nReversing must never be rushed – always reverse slowly and whilst exercising the maximum safety precautions. Observe all around the vehicle and indicate and warn others that you are reversing with the correct signalling device(s).\n(Página 195 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\">Maneouvres &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\">&nbsp; &nbsp;</div><div class=\"normal\"><u><b>8 Reversing</b></u></div><div class=\"normal\">Before starting to reverse, the driver must make sure that it is safe to do so. This may mean getting out of the vehicle and checking around the vicinity or preferably reversing under the supervision and assistance of another person, who will act to guide the driver backwards. It is always necessary to take into consideration the space you are reversing into, the circumstances and the movement of others.</div><div class=\"normal\">Reversing must never be rushed – always reverse slowly and whilst exercising the maximum safety precautions. Observe all around the vehicle and indicate and warn others that you are reversing with the correct signalling device(s).</div>(Página 195 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q11.jpg",
+      "topic_ids": [
+        "driving.reversing"
+      ],
+      "primary_topic_id": "driving.reversing",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The safety checks before reversing are tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "En el lado derecho o en el izquierdo, es indiferente.\nOn the right hand side or the left hand side. It doesn’t matter.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "En el lado izquierdo.\nOn the left hand side.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "En el lado derecho.\nOn the right hand side.",
+          "correct": false
+        }
+      ],
+      "image_url": "fd2a3cab-bb09-4f3c-9a13-d70d94b51986M.jpg",
+      "number": "12.",
+      "question": "Una motocicleta con un solo espejo retrovisor, ¿en qué lado debe llevarlo?\nIf a motorcycle has only one rear view mirror, which side should it be on?",
+      "source_ordinal": 12,
+      "canonical_id": "b1e493024fe6741c2281afb3",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:12",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "VISIBILITY    \n     \n8 Rear-view    \n8.1 Obligatory requirements regarding rear-view mirrors\nFor motorcycles, with or without sidecar the requirements are as follows:\nIf the maximum design speed is less than or equal to 100 km/h they must have an obligatory rear-view mirror fitted on the left side. A mirror on the right side remains optional.\nIf the maximum design speed is greater than 100 km/h they must have rear view mirrors fitted to both sides.\n(Página 90 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>VISIBILITY</b> &nbsp; &nbsp; </div><div class=\"normal\">&nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><b>8 Rear-view</b> &nbsp; &nbsp; </div><div class=\"normal\"><u>8.1 Obligatory requirements regarding rear-view mirrors</u></div><div class=\"normal\">For <b>motorcycles</b>, with or without sidecar the requirements are as follows:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\">If the maximum design speed is <b>less than or equal to 100 km/h</b> they must have an <b>obligatory rear-view mirror fitted on the left side</b>. A mirror on the right side remains optional<b>.</b></li><li class=\"normal\">If the maximum design speed is <b>greater than 100 km/h</b> they <b>must have rear view mirrors fitted to both sides.</b></li></ul><div class=\"normal\"></div>(Página 90 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q12.jpg",
+      "topic_ids": [
+        "vehicle.visibility",
+        "vehicle.motorcycles"
+      ],
+      "primary_topic_id": "vehicle.visibility",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The required side of a motorcycle's single mirror is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "restaurante.\nrestaurant.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "merendero.\npicnic spot.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "bar o cafetería.\nbar or coffee shop.",
+          "correct": true
+        }
+      ],
+      "image_url": "d8d32927-d3c9-4ef5-b9ef-0b0468935297M.jpg",
+      "number": "13.",
+      "question": "La señal de la imagen indica la situación de un...\nThe pictured sign indicates a...",
+      "source_ordinal": 13,
+      "canonical_id": "2036729ba5f001cace99e5a8",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:13",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "5 Vertical Signs                    \n               \n5.4 Indication Road Signs    \n5.4.4 Service road signs  \nS-112 Cafeteria\nIndicates the location of a bar or café.\n(Página 139 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>5 Vertical Signs</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"normal\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><u><b>5.4 Indication Road Signs</b></u> &nbsp; &nbsp; </div><div class=\"normal\"><u>5.4.4 Service road signs</u> &nbsp;</div><div class=\"normal\"><b>S-112 Cafeteria</b></div><div class=\"normal\">Indicates the location of a bar or café. </div>(Página 139 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q13.jpg",
+      "topic_ids": [
+        "signs.information"
+      ],
+      "primary_topic_id": "signs.information",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The service sign identifies a bar or cafe.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Los airbags y los reposacabezas.\nThe airbags and the headrests.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "La suspensión y los amortiguadores.\nThe suspension and the shock absorbers.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Los frenos y el ABS.\nThe brakes and the ABS.",
+          "correct": false
+        }
+      ],
+      "image_url": "33ac6676-f78c-46f5-94bd-0ef34dbcd2e9M.jpg",
+      "number": "14.",
+      "question": "¿Qué sistemas de seguridad pueden perder eficacia si no se lleva abrochado el cinturón de seguridad?\nWhich safety systems may lose their efficiency if your seat belt is not fastened?",
+      "source_ordinal": 14,
+      "canonical_id": "9042e81ccadaf85573d49509",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:14",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "9 Airbags\n \nHowever, the airbag is not effective unless it is used with a seat belt. In the event of a collision, unless the seat belt is fastened, (buckled) there is a high risk that the head will hit the airbag when it is still inflating and, because of the force exerted in this inflation process, serious injuries can occur, which can even be fatal.\n(Página 80 del manual 'Learning to drive')\n\n10 Head restraints\n \n10.1 Head restraints – correct usage\nTo ensure optimum safety, the top of the restraint must be at the same height as the top of the head. There must be very little distance between the head and the restraint: it should be as close as possible, bearing in mind the need to maintain freedom of movement of the head and comfort (approximately 4 cm’s is advised).\nIf the head restraint is adjusted below the nape of neck there is the increased risk of suffering cervical vertebrate (spinal)/neck injury.\n(Página 81 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>9 Airbags</b> </div><div class=\"normal\">&nbsp;</div><div class=\"normal\">However, <b>the airbag is not effective unless it is used with a seat belt. </b>In the event of a collision, unless the seat belt is fastened, (buckled) there is a high risk that the head will hit the airbag when it is still inflating and, because of the force exerted in this inflation process, <b>serious injuries </b>can occur, which can even be <b>fatal</b>.</div>(Página 80 del manual 'Learning to drive')<br><hr><div class=\"titulo\"><b>10 Head restraints</b> </div><div class=\"normal\">&nbsp;</div><div class=\"normal\"><u><b>10.1 Head restraints – correct usage</b></u></div><div class=\"normal\">To ensure optimum safety, the <b>top </b>of the restraint must be <b>at the same height as the top of the head. </b>There must be <b>very little distance </b>between the head and the restraint: it should be as close as possible, bearing in mind the need to maintain freedom of movement of the head and comfort (approximately 4 cm’s is advised).</div><div class=\"normal\">If the head restraint is adjusted below the nape of neck there is the increased risk of suffering cervical vertebrate (spinal)/neck injury.</div>(Página 81 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q14.jpg",
+      "topic_ids": [
+        "routine.seatbelts",
+        "vehicle.passive"
+      ],
+      "primary_topic_id": "routine.seatbelts",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The belt's role in the effectiveness of airbags and headrests is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "no es necesario tomar ninguna precaución cuando no se necesita receta médica para poder comprarlos.\nit isn’t necessary to take any special precautions if you do not need a medical prescription to buy it.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "debe esperar al menos dos horas antes de conducir.\nyou must wait at least two hours before driving.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "debe leer las indicaciones del prospecto y, en caso de duda, consultar al médico o al farmacéutico.\nyou must read the indications on the prospectus and, if you have any doubts, ask your doctor or chemist.",
+          "correct": true
+        }
+      ],
+      "image_url": "392c9a93-444f-45da-8657-73e745d3dc3fM.jpg",
+      "number": "15.",
+      "question": "Si está tomando medicamentos y va a conducir…\nIf you are taking medication and you are going to drive…",
+      "source_ordinal": 15,
+      "canonical_id": "bc42dc0062d01d4999b4b57a",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:15",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "ILLNESS AND MEDICATION\n \n22 General Precautions\nNot everyone responds well or the same to medication. The age, the habit of use, physical condition of the user or other circumstances may vary the effects of the drugs.\nIt is therefore necessary to adopt a series of precautions:\nAlways consult the doctor or pharmacist.\nUse medications properly.\nNever self-medicate.\nNever mix drugs with alcohol.\nConsult the package insert for each drug to see the affects when driving. Any medications that may reduce the ability to drive or operate machinery must be identified on the outside of the box with the symbol shown, with the aim of alerting the consumer to read the package insert.\n(Página 49 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>ILLNESS AND MEDICATION</b> </div><div class=\"normal\">&nbsp; </div><div class=\"normal\"><b>22 General Precautions</b> </div><div class=\"normal\"><b>Not everyone responds well or the same to medication.</b> The age, the habit of use, physical condition of the user or other circumstances may <b>vary the effects</b> of the drugs.</div><div class=\"normal\">It is therefore necessary to adopt a series of precautions:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\">Always consult the doctor or pharmacist.</li><li class=\"normal\">Use medications properly.</li><li class=\"normal\">Never self-medicate.</li><li class=\"normal\">Never mix drugs with alcohol.</li><li class=\"normal\">Consult the package insert for each drug to see the affects when driving. Any medications that may reduce the ability to drive or operate machinery must be identified on the outside of the box with the symbol shown, with the aim of alerting the consumer to read the package insert.</li></ul><div class=\"normal\"><img src=\"exam-1005-q15-help-01.png\" border=\"0\" style=\"width:1.43in;height:1.07in;\"></div>(Página 49 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q15.jpg",
+      "topic_ids": [
+        "routine.health"
+      ],
+      "primary_topic_id": "routine.health",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Reading medicine instructions and seeking professional clarification before driving are tested.",
+      "help_images": [
+        "exam-1005-q15-help-01.png"
+      ]
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "emita unos toques de silbato cortos y frecuentes.\ngives short and frequent whistles.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "baje el brazo.\nlowers his arm.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "lo indique con otra señal.\nindicates that you can with another signal.",
+          "correct": true
+        }
+      ],
+      "image_url": "9df8ae2f-14dd-4bd2-9c90-f5bf75a9465aM.jpg",
+      "number": "16.",
+      "question": "Detiene su vehículo al ver a un agente que tiene el brazo extendido horizontalmente, puede reanudar la marcha cuando el agente…\nYou stop your vehicle when you see a traffic officer with his arm extended horizontally. You can start driving again when the officer…",
+      "source_ordinal": 16,
+      "canonical_id": "b71026948ac9d4332994028e",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:16",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "2 Police Officers and corresponding signalling  \n   \n2.2 Signals with the arm\n2.2.2 Arm or arms held out horizontally\nAll road users approaching the officer from either direction cut off by the arm(s) held out must stop, whichever way they are travelling.\nThis signal remains in force, even if the officer lowers his/her arm(s), provided that he/she does not change position or make another signal.\n \n(Página 110 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>2 Police Officers and corresponding signalling</b> &nbsp;</div><div class=\"titulo\"><b>&nbsp;</b> &nbsp;</div><div class=\"normal\" style=\"text-align:left;\"><u><b>2.2 Signals with the arm</b></u></div><div class=\"normal\"><u>2.2.2 Arm or arms held out horizontally</u></div><div class=\"normal\">All road users approaching the officer from either direction cut off by the arm(s) held out must stop, whichever way they are travelling.</div><div class=\"normal\">This signal remains in force, even if the officer lowers his/her arm(s), provided that he/she does not change position or make another signal.</div><div class=\"normal\" style=\"text-align:left;\"> &nbsp;</div>(Página 110 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q16.jpg",
+      "topic_ids": [
+        "priority.officer"
+      ],
+      "primary_topic_id": "priority.officer",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The persistence of an officer's stop order until another signal is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Seguir siempre las indicaciones de otra persona.\nAlways follow the instructions of another person.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "Señalizar la maniobra porque los demás tienen que ceder el paso.\nSignal the manoeuvre because the other drivers must give way.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Asegurarse de que puede hacerlo sin peligro para los demás usuarios.\nMake sure you can do so without putting other road users in danger.",
+          "correct": true
+        }
+      ],
+      "image_url": "02367887-9f05-41de-87a1-5319a071f065M.jpg",
+      "number": "17.",
+      "question": "Un turismo, ¿qué debe hacer para incorporarse a la circulación?\nWhat must a private car do in order to merge with the traffic?",
+      "source_ordinal": 17,
+      "canonical_id": "f1b475b68ffd624ed05371aa",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:17",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Maneouvres  \n \n3 Joining the traffic flow\n3.2.1 Observation\nRegardless of where the driving is joining from, he must do so without endangering other road users.\n(Página 184 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\">Maneouvres &nbsp; </div><div class=\"normal\">&nbsp; </div><div class=\"normal\"><u><b>3 Joining the traffic flow</b></u> </div><div class=\"normal\"><u>3.2.1 Observation</u> </div><div class=\"normal\"><b>Regardless of where the driving is joining from,</b> he must do so <b>without endangering other road users.</b> </div>(Página 184 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q17.jpg",
+      "topic_ids": [
+        "driving.merging"
+      ],
+      "primary_topic_id": "driving.merging",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Safe entry into the traffic stream is tested; insurance is not involved.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "procurando evitar ruidos y molestias.\nmaking sure to avoid noise and inconvenience to others.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "dentro de la vía.\non the road.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "por el lado del vehículo más próximo al centro de la calzada.\nfrom the side of the vehicle nearest to the centre of the road.",
+          "correct": false
+        }
+      ],
+      "image_url": "37896abf-451a-4be5-ade8-964a9cc7a8b8M.jpg",
+      "number": "18.",
+      "question": "Las operaciones de carga y descarga se llevarán a cabo…\nLoading and unloading operations must be carried out…",
+      "source_ordinal": 18,
+      "canonical_id": "1f446d7ced64bd880619ba1d",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:18",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Transporting people and loads              \n               \n3 Transport of load  \n3.7 Loading and unloading\nWhenever possible loading and unloading a vehicle, both inside and outside a built-up-area, should be carried out off the public road.  \nExceptionally, when this is not possible, the following should be complied with:\nIn compliance with the laws relating to parking and stopping and in built-upareas, in conformity of the municipal requirements concerning hours and suitable places etc.\nFrom the side of the vehicle closest to the edge of the roadway.\nAs quickly as possible.\nWith minimal noise and without causing annoyance.\n(Página 219 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\">Transporting people and loads &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"titulo\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\" style=\"text-align:left;\"><u><b>3 Transport of load</b></u> &nbsp; </div><div class=\"normal\" style=\"text-align:left;\"><u>3.7 Loading and unloading</u></div><div class=\"normal\">Whenever possible <b>loading</b> and <b>unloading</b> a vehicle, both inside and outside a built-up-area, should be carried out off the public road. &nbsp;</div><div class=\"normal\"><b>Exceptionally</b>, when this is not possible, the following should be complied with:</div><ul style=\"list-style-type:bullet;\"><li class=\"normal\">In compliance with the laws relating to <b>parking and stopping</b> and in built-upareas, in conformity of the municipal requirements concerning hours and suitable places etc.</li><li class=\"normal\">From <b>the side of the vehicle closest to the edge of the roadway.</b></li><li class=\"normal\">As <b>quickly as possible.</b></li><li class=\"normal\">With <b>minimal noise </b>and <b>without causing annoyance.</b></li></ul>(Página 219 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q18.jpg",
+      "topic_ids": [
+        "vehicle.cargo",
+        "eco.noise"
+      ],
+      "primary_topic_id": "vehicle.cargo",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Avoiding noise and nuisance during loading and unloading is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "el vehículo más ligero.\nthe lightest vehicle.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "el vehículo que baja.\nthe vehicle coming downhill.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "el vehículo que sube.\nthe vehicle going uphill.",
+          "correct": false
+        }
+      ],
+      "image_url": "d83d95aa-5b3d-423b-9982-a9a41a0f8228M.jpg",
+      "number": "19.",
+      "question": "En un tramo de vía estrecho de gran pendiente, sin señalizar, debe ceder el paso generalmente...\nIn a narrow stretch on a steep slope, without a sign, who must generally give way?",
+      "source_ordinal": 19,
+      "canonical_id": "9caff256b85c6552e6be4c2f",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:19",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Priorities, level crossings and tunnels      \n     \n5 Narrow Sections    \n5.2 Narrowing section without signed priority\n5.2.2 Sections of roadway with a steep gradient\nWhere the road section is narrow and there is a steep gradient and in the absence of road signs (that determine priority) the vehicle going uphill has right of way - unless it is able to reach a lay-by, where it is able to wait for the other vehicle to pass.\n(Página 209 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\">Priorities, level crossings and tunnels &nbsp; &nbsp; &nbsp; </div><div class=\"normal\">&nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><u><b>5 Narrow Sections</b></u> &nbsp; &nbsp;</div><div class=\"normal\"><u>5.2 Narrowing section without signed priority</u></div><div class=\"normal\"><u>5.2.2 Sections of roadway with a steep gradient</u></div><div class=\"normal\">Where the road section is narrow and there is a steep gradient and in the absence of road signs (that determine priority) the vehicle going uphill has right of way - unless it is able to reach a lay-by, where it is able to wait for the other vehicle to pass.</div>(Página 209 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q19.jpg",
+      "topic_ids": [
+        "priority.narrow"
+      ],
+      "primary_topic_id": "priority.narrow",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The downhill vehicle's general duty to yield on an unsigned steep narrow section is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "reversible.\na reversible lane.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "adicional de circulación.\nan additional traffic lane.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "de utilización en sentido contrario al habitual.\na lane to be used for traffic travelling in the opposite direction to the usual direction.",
+          "correct": false
+        }
+      ],
+      "image_url": "518a18c4-9cfe-4c88-9e49-61feb93fa469M.jpg",
+      "number": "20.",
+      "question": "Un carril delimitado por marcas longitudinales dobles discontinuas es un carril…\nA lane limited by double broken lines is…",
+      "source_ordinal": 20,
+      "canonical_id": "68b25f8708f1844c5829287d",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:20",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "6 Road marks              \n             \n6.2 Longitudinal road markings  \nDouble broken longitudinal markings\nThis is a special case of broken longitudinal markings. They define reversible lanes on both sides, where the direction of traffic is regulated—either one way or the other—by lane traffic lights or other signalling systems.\n(Página 154 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>6 Road marks</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\"><u><b>6.2 Longitudinal road markings</b></u> &nbsp; </div><div class=\"normal\"><b>Double broken longitudinal markings</b></div><div class=\"normal\">This is a special case of broken longitudinal markings. They define <b>reversible lanes </b>on both sides, where the direction of traffic is regulated—either one way or the other—by lane traffic lights or other signalling systems.</div>(Página 154 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q20.jpg",
+      "topic_ids": [
+        "signs.markings",
+        "driving.lanes"
+      ],
+      "primary_topic_id": "signs.markings",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Double broken longitudinal lines identify a reversible lane; reversing a vehicle is not tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "No, aunque sobrepase la tasa máxima permitida.\nNo, even though he has exceeded the maximum limit.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "No, solo pueden sancionar al conductor.\nNo. They can only fine him.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Sí.\nYes.",
+          "correct": true
+        }
+      ],
+      "image_url": "359b4a22-4485-45d0-92c8-3ef708ada2d9M.jpg",
+      "number": "21.",
+      "question": "Cuando un conductor da positivo en las pruebas de alcoholemia, ¿los agentes pueden inmovilizar su vehículo?\nWhen a driver gives a positive result in a breathalyser test, may police officers immobilise his vehicle?",
+      "source_ordinal": 21,
+      "canonical_id": "2eb65f0747f86d1a868fe3a2",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:21",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "ALCOHOL AND OTHER DRUGS\n \n18.3 Immobilisation of the vehicle\nIf the result of tests for alcohol or drugs were positive, the official (police officer) also has the power to prevent the vehicle from continuing any further. They also may detain the vehicle where the driver has refused to carry out such tests. As soon as the driver is fit to drive or another person is able to drive the vehicle on the driver’s behalf the detention ceases to have effect and the vehicle is eligible to continue.\n(Página 45 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>ALCOHOL AND OTHER DRUGS</b></div><div class=\"normal\">&nbsp;</div><div class=\"normal\"><u><b>18.3 Immobilisation of the vehicle</b></u></div><div class=\"normal\">If the <b>result </b>of tests for alcohol or drugs were <b>positive</b>, the official (police officer) also has the power to prevent the vehicle from continuing any further. They also may <b>detain </b>the vehicle where the driver has refused to carry out such tests. As soon as the <b>driver is fit to drive </b>or <b>another person is able to drive </b>the vehicle on the driver’s behalf the detention ceases to have effect and <b>the vehicle is eligible to continue.</b></div>(Página 45 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q21.jpg",
+      "topic_ids": [
+        "routine.alcohol"
+      ],
+      "primary_topic_id": "routine.alcohol",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Vehicle immobilisation following a positive breath test is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "No.\nNo.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "Sí, salvo que hay transcurrido más de un año.\nYes, unless it expired over one year ago.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Sí, porque aunque haya caducado tiene permiso.\nYes, because even though it has expired, he is permitted to drive.",
+          "correct": false
+        }
+      ],
+      "image_url": "",
+      "number": "22.",
+      "question": "Un permiso de conducción caducado, ¿autoriza a su titular a conducir?\nDoes an expired driver’s license authorise the holder to drive?",
+      "source_ordinal": 22,
+      "canonical_id": "13c27c24ab3fcf5890fd6574",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:22",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "2 Driver documentation\n \n2.6 Driving licences - conditions of use/validity\nThe authority granted by the issuing of a driving licence to drive, is subject to certain conditions and periods of validity.\nIt is also dependent on the condition that its holder has not completely lost his initial allotment of points.\nThe normal period of validity may be reduced if, during the time that it remains in force it becomes evident that the holder is suffering from a medical condition, that is susceptible to a worsening of the condition and to a further deterioration of the drivers health.\nAn expired driving license or permit does not authorise their holders to drive. Using an expired permit or license will give rise to its immediate confiscation.\n(Página 23 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>2 Driver documentation</b></div><div class=\"normal\">&nbsp;</div><div class=\"normal\"><u><b>2.6 Driving licences - conditions of use/validity</b></u></div><div class=\"normal\">The authority granted by the issuing of a driving licence to drive, is <b>subject to certain conditions </b>and periods of validity. </div><div class=\"normal\">It is also dependent on the condition that its holder has not completely lost his initial allotment of points.</div><div class=\"normal\">The normal <b>period of validity may be reduced </b>if, during the time that it remains in force it becomes evident that the holder is suffering from a <b>medical condition</b>, that is susceptible to a worsening of the condition and to a further deterioration of the drivers health.</div><div class=\"normal\">An expired driving license or permit <b>does not authorise </b>their holders to drive. Using an expired permit or license will give rise to its immediate <b>confiscation.</b></div>(Página 23 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "",
+      "topic_ids": [
+        "numbers.deadlines.licences"
+      ],
+      "primary_topic_id": "numbers.deadlines.licences",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Expiry and continued validity of a driving licence are tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Que sea capaz de controlar mejor su vehículo ante una situación de emergencia.\nHe is capable of controlling his vehicle better in an emergency situation.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "Que no sea capaz de controlar su vehículo ante una situación de emergencia.\nHe is not capable of controlling his vehicle in an emergency situation.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "Que su tiempo de reacción disminuya.\nHis reaction time reduces.",
+          "correct": false
+        }
+      ],
+      "image_url": "7051cff4-b2c3-4bc2-987e-58d70cb7f1c8M.jpg",
+      "number": "23.",
+      "question": "¿Qué le puede suceder a un conductor que circula a velocidad inadecuada?\nWhat could happen to a driver travelling at an inappropriate speed?",
+      "source_ordinal": 23,
+      "canonical_id": "7636737ebd83a93134328c2e",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:23",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "1 Speed  \n \n1.2 Is it dangerous to speed?\nSpeed by itself does not necessarily constitute a risk factor. However, driving at a high speed makes it difficult for the driver to control the vehicle in a situation should the need arise.\nStudies have found that excessive or inappropriate speed is a contributory factor in at least one in four traffic collisions, making it one of the main causes of a traffic collision.\n(Página 170 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>1 Speed</b> &nbsp; </div><div class=\"normal\">&nbsp;</div><div class=\"normal\"><u><b>1.2 Is it dangerous to speed?</b></u></div><div class=\"normal\">Speed by itself does not necessarily constitute a risk factor. However, driving at a <b>high speed </b>makes it <b>difficult for the driver to control </b>the vehicle in a situation should the need arise.</div><div class=\"normal\">Studies have found that excessive or inappropriate speed is a contributory factor in at least <b>one in four traffic collisions, </b>making it one of the main causes of a traffic collision.</div>(Página 170 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q23.jpg",
+      "topic_ids": [
+        "speed.adaptation"
+      ],
+      "primary_topic_id": "speed.adaptation",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Loss of control at an inappropriate speed is tested, not merging priority.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Solo los mayores de 16 años que tengan una estatura superior a 135 centímetros y lleven abrochado el cinturón de seguridad.\nOnly those over 16 years of age who are over 1.35 m tall and who are wearing a seat belt.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "Todos los que tengan una estatura superior a 135 centímetros y lleven abrochado el cinturón de seguridad.\nAll those who are over 1.35 m tall and who are wearing a seat belt.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "Todos los que tengan una estatura de 135 centímetros y lleven abrochado el cinturón de seguridad.\nAll those who are 1.35 m tall and who are wearing a seat belt.",
+          "correct": false
+        }
+      ],
+      "image_url": "cc8bf85f-65ac-4f3d-87cd-85fd102f513eM.jpg",
+      "number": "24.",
+      "question": "¿Generalmente qué menores de edad pueden ocupar los asientos delanteros del turismo?\nGenerally speaking, which minors are permitted to sit in the front seat of a private car?",
+      "source_ordinal": 24,
+      "canonical_id": "04076af13efe644de347e917",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:24",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "7 Seat belts\n \n7.2 Use\nVehicles for up to nine occupants including driver\nIn this type of vehicle, minors who are 135 centimetres tall or less must travel in the back seats and use the pertinent child retention systems.\nMinors who are taller than 135 centimetres may travel either in the front or back seats, with officially approved seatbelts that are properly fastened.\nHowever, because the seat belt is designed for adults, for safety it is advisable that they use approved child retention devices adapted to their size and weight.\n(Página 76 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>7 Seat belts</b></div><div class=\"normal\">&nbsp;</div><div class=\"normal\"><u><b>7.2 Use</b></u></div><div class=\"normal\"><u>Vehicles for up to nine occupants including driver</u></div><div class=\"normal\">In this type of vehicle, <b>minors </b>who are <b>135 centimetres tall or less </b>must travel in the <b>back </b>seats and use the pertinent child <b>retention systems.</b></div><div class=\"normal\">Minors who are <b>taller than 135 centimetres </b>may travel either in the <b>front </b>or <b>back </b>seats, with officially approved seatbelts that are <b>properly fastened.</b></div><div class=\"normal\">However, because the seat belt is designed for adults, for safety it is advisable that they use approved child retention devices adapted to their size and weight.</div>(Página 76 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q24.jpg",
+      "topic_ids": [
+        "vehicle.children",
+        "routine.seatbelts"
+      ],
+      "primary_topic_id": "vehicle.children",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The height and belt requirements for minors in front seats are tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Únicamente cuando sea una persona mayor.\nOnly when it is an older person.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "Sí, por la falta de experiencia al volante.\nYes, due to their inexperience at the wheel.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "No.\nNo.",
+          "correct": false
+        }
+      ],
+      "image_url": "eb03a01d-8922-43b2-bdd3-8c4bf4ec4571M.jpg",
+      "number": "25.",
+      "question": "Un conductor novel, ¿puede sentirse fatigado más fácilmente?\nCan a new driver feel fatigued more easily?",
+      "source_ordinal": 25,
+      "canonical_id": "6f43e76cabd3dad3a327e47e",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:25",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "FACTORS THAT AFFECT PHYSICAL CAPABILITIES  \n \n10.1 Circumstances that cause fatigue\n10.1.3 Driver circumstances\nChanges of normal driving habits. Most people only drive for short distances and during the day. Therefore special care must be taken when driving long distances (for example, during holidays) and especially when driving at night.\nBeing a novice driver as this entails not having acquired all of the automated processes involved in driving, and therefore more concentration is required.\nAdopting an inappropriate driving posture and position in the seat. This can result in pain, stiffness or muscular overload at the end of the journey.\n(Página 37 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>FACTORS THAT AFFECT PHYSICAL CAPABILITIES</b> &nbsp;</div><div class=\"normal\">&nbsp; </div><div class=\"normal\"><u><b>10.1 Circumstances that cause fatigue</b></u> </div><div class=\"normal\"><u>10.1.3 Driver circumstances</u></div><ul style=\"list-style-type:bullet;\"><li class=\"normal\"><b>Changes of normal driving habits. </b>Most people only drive for short distances and during the day. Therefore special care must be taken when driving long distances (for example, during holidays) and especially when driving at night.</li><li class=\"normal\">Being a <b>novice driver </b>as this entails not having acquired all of the automated processes involved in driving, and therefore more concentration is required.</li><li class=\"normal\">Adopting an <b>inappropriate driving posture </b>and position in the seat. This can result in pain, stiffness or muscular overload at the end of the journey.</li></ul>(Página 37 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q25.jpg",
+      "topic_ids": [
+        "routine.fatigue"
+      ],
+      "primary_topic_id": "routine.fatigue",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Inexperience as a factor in driver fatigue is tested, not a novice restriction period.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Cambiar de carril rápidamente.\nChange lanes quickly.",
+          "correct": true
+        },
+        {
+          "letter": "B",
+          "text": "Detenerse debajo del aspa roja.\nStop under the red arrow.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Detenerme en el próximo cruce.\nStop at the next crossroads.",
+          "correct": false
+        }
+      ],
+      "image_url": "d75063fb-358f-4fde-9566-e901dad4679dM.jpg",
+      "number": "26.",
+      "question": "Circula por el carril izquierdo y se enciende el aspa roja. ¿Qué debe hacer?\nYou are driving in the left hand lane and the red arrow lights up. What must you do?",
+      "source_ordinal": 26,
+      "canonical_id": "0b5bde64bfb58a4d641822ff",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:26",
+      "collection_type": "exam",
+      "selected_letter": "A",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "4 Traffic lights\n \n4.3 Square traffic lights for vehicles or lanes\n4.3.1 Red x-shaped light\nThe red x-shaped light forbids drivers from travelling in this lane.\nDrivers who are in this lane, when the x-shaped light illuminates must leave this lane immediately, but must keep in mind their safety and the safety of others when changing lanes.\n(Página 117 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>4 Traffic lights</b> </div><div class=\"titulo\"><b>&nbsp;</b> </div><div class=\"normal\" style=\"text-align:left;\"><u><b>4.3 Square traffic lights for vehicles or lanes</b></u></div><div class=\"normal\"><u>4.3.1 Red x-shaped light</u></div><div class=\"normal\">The red x-shaped light <b>forbids </b>drivers from <b>travelling in this lane</b>.</div><div class=\"normal\">Drivers who are in this lane, when the x-shaped light illuminates <b>must leave this lane immediately</b>, but must keep in mind their safety and the safety of others when changing lanes.</div>(Página 117 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q26.jpg",
+      "topic_ids": [
+        "priority.lights",
+        "driving.lanes"
+      ],
+      "primary_topic_id": "priority.lights",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The required action when a red lane-control cross closes the lane is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "en el arcén, cuando sea transitable y suficiente.\non the hard shoulder, when it is passable and wide enough.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "siempre fuera de la calzada, en el lado derecho de la misma y dejando libre la parte transitable de arcén.\nalways off the road, on the right hand side and leaving the passable part of the hard shoulder free.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "siempre en el arcén.\nalways on the hard shoulder.",
+          "correct": false
+        }
+      ],
+      "image_url": "41f72666-bec4-4b8a-a5ab-00ddbc98a16aM.jpg",
+      "number": "27.",
+      "question": "Como norma general, en una vía interurbana la parada y el estacionamiento se realizarán…\nAs a general rule, on an interurban road, stopping and parking will be done…",
+      "source_ordinal": 27,
+      "canonical_id": "bfd37addf3d5309f787b8b7b",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:27",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "Maneouvres        \n   \n10 Immobilisations – Stationary vehicles Stopping (waiting) and parking  \n10.2 Localities where this is permissible\nOn interurban roads, stopping and parking must be done always on the right side of the road, off the carriageway and leaving the passable part of the hard shoulder free.\n(Página 198 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\">Maneouvres &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\">&nbsp; &nbsp;</div><div class=\"normal\"><u><b>10 Immobilisations – Stationary vehicles Stopping (waiting) and parking</b></u> &nbsp;</div><div class=\"normal\"><u>10.2 Localities where this is permissible</u></div><div class=\"normal\">On <b>interurban roads, </b>stopping and parking must be done always on the right side of the road, <b>off the carriageway </b>and <b>leaving the passable part of the hard shoulder free.</b></div>(Página 198 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q27.jpg",
+      "topic_ids": [
+        "driving.parking"
+      ],
+      "primary_topic_id": "driving.parking",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "Interurban stopping and parking must leave the usable shoulder free.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "a vehículos de dos ruedas.\nto two-wheeled vehicles.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "a peatones, animales, vehículos de tracción animal, ciclomotores, vehículos de movilidad personal, ciclistas o conjuntos de ciclistas.\nto pedestrians, animals, animal-drawn vehicles, mopeds, personal mobility devices, cyclists, or groups of cyclists.",
+          "correct": true
+        },
+        {
+          "letter": "C",
+          "text": "a cualquier vehículo.\nto any vehicle.",
+          "correct": false
+        }
+      ],
+      "image_url": "eecf6b5b-6044-4b40-9f10-544fa97b93b2M.jpg",
+      "number": "28.",
+      "question": "Debe dejar una separación lateral de 1,50 metros, como mínimo, cuando adelante...\nYou should keep a side-by-side distance of at least 1.50 metres when overtaking...",
+      "source_ordinal": 28,
+      "canonical_id": "bfb310b469fb7f0b15f509bc",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:28",
+      "collection_type": "exam",
+      "selected_letter": "B",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "",
+      "help_html": "",
+      "help_status": "not_available_in_source",
+      "local_image": "exam-1005-q28.jpg",
+      "topic_ids": [
+        "numbers.distances",
+        "driving.overtaking"
+      ],
+      "primary_topic_id": "numbers.distances",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The minimum lateral overtaking clearance for listed vulnerable road users is tested.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Sí, pero no hay plazo obligatorio para comunicar la venta.\nYes, but there is no mandatory period to report the sale.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "No. El nuevo titular es el que tiene que comunicar la compra.\nNo. It is the new owner who must report the purchase.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Sí. Debo comunicar la venta en el plazo de 10 días, indicando los datos del nuevo titular.\nYes. I must report the sale within 10 days, giving the details of the new owner.",
+          "correct": true
+        }
+      ],
+      "image_url": "60e35d91-34b9-47a8-8f65-450797163c0cM.jpg",
+      "number": "29.",
+      "question": "Si vende su vehículo, ¿debe comunicarlo a la Jefatura de Tráfico?\nIf you sell your vehicle, do you have to inform the Spanish Traffic Department (Jefatura de Tráfico)?",
+      "source_ordinal": 29,
+      "canonical_id": "9f167a45875a4879f7f77c2c",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:29",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "3 Documentation for the vehicle    \n     \n3.1 Registration certificate\nIn any event, a new vehicle registration certificate will be issued if the variation in the data communicated affects those shown on the aforementioned document.\nIn other cases, the owner, as shown on the document, must notify the Traffic Headquarters, within a period of 10 days, (from the date of any transaction) when the vehicle is sold / ownership transferred and provide them with the name and address of the new owner / buyer (acquirer).\nThe purchaser, new owner, must obtain, within thirty days of the acquisition of the vehicle, a new registration document.\nThe vehicle cannot be used until this document has been obtained.\n(Página 25 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>3 Documentation for the vehicle</b> &nbsp; &nbsp; </div><div class=\"normal\"><b>&nbsp;</b> &nbsp; &nbsp; </div><div class=\"normal\"><u><b>3.1 Registration certificate</b></u> </div><div class=\"normal\">In any event, a <b>new </b>vehicle registration certificate will be issued if the variation in the data communicated <b>affects </b>those <b>shown </b>on the aforementioned document.</div><div class=\"normal\">In other cases, the owner, as shown on the document, must notify the Traffic Headquarters, within a period of <b>10 days</b>, (from the date of any transaction) when the vehicle is <b>sold </b>/ ownership transferred and provide them with the name and address of the new owner / buyer (acquirer).</div><div class=\"normal\"><b>The purchaser</b>, new owner, must obtain, within <b>thirty days </b>of the acquisition of the vehicle, a new registration document.</div><div class=\"normal\">The vehicle cannot be used until this document has been obtained.</div>(Página 25 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q29.jpg",
+      "topic_ids": [
+        "numbers.deadlines.transfer_seller"
+      ],
+      "primary_topic_id": "numbers.deadlines.transfer_seller",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The seller's notification deadline and buyer details are tested, not the buyer's transfer deadline.",
+      "help_images": []
+    },
+    {
+      "answers": [
+        {
+          "letter": "A",
+          "text": "Vía con dos carriles para el mismo sentido.\nA road with two lanes in the same direction.",
+          "correct": false
+        },
+        {
+          "letter": "B",
+          "text": "Prioridad de paso en sentido contrario.\nPriority right-of-way in the opposite direction.",
+          "correct": false
+        },
+        {
+          "letter": "C",
+          "text": "Circulación en los dos sentidos.\nTwo-way traffic.",
+          "correct": true
+        }
+      ],
+      "image_url": "f3387ed1-c953-4218-b371-289fe7ea9faeM.jpg",
+      "number": "30.",
+      "question": "¿Qué indica la señal?\nWhat does this sign indicate?",
+      "source_ordinal": 30,
+      "canonical_id": "0be98ae71468170f9a8702e0",
+      "source_test_id": 1005,
+      "question_id": "exam:1005:30",
+      "collection_type": "exam",
+      "selected_letter": "C",
+      "portal_completed": true,
+      "training_enabled": false,
+      "help": "5 Vertical Signs                \n             \n5.2 Signs that warn of danger  \nP-25 Two-way traffic\nDanger due to the proximity of an area where traffic moves in both directions.\n(Página 122 del manual 'Learning to drive')\n",
+      "help_html": "<div class=\"titulo\"><b>5 Vertical Signs</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div><div class=\"normal\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div><div class=\"normal\"><u><b>5.2 Signs that warn of danger</b></u> &nbsp;</div><div class=\"normal\"><b>P-25 Two-way traffic</b></div><div class=\"normal\">Danger due to the proximity of an area where traffic moves in both directions.</div>(Página 122 del manual 'Learning to drive')<br>",
+      "help_status": "captured",
+      "local_image": "exam-1005-q30.jpg",
+      "topic_ids": [
+        "signs.warning"
+      ],
+      "primary_topic_id": "signs.warning",
+      "classification_reviewed": true,
+      "classification_review_required": false,
+      "classification_reason": "The triangular sign warns of two-way traffic; it is not an information or priority sign.",
+      "help_images": []
+    }
+  ]
+}

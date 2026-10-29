@@ -31,17 +31,28 @@ class StagedExamImportTest(unittest.TestCase):
             before = runtime_snapshot()
             run_import()
             self.assertEqual(before, runtime_snapshot(), 'Staged content must not change application data')
-            captures = sorted((root / 'materials/exam').glob('exam-100[12]-capture.json'))
+            captures = []
+            for path in sorted((root / 'materials/exam').glob('exam-*-capture.json')):
+                questions = json.loads(path.read_text())['questions']
+                if questions and all(q.get('training_enabled') is False for q in questions):
+                    captures.append(path)
             for path in captures:
                 data = json.loads(path.read_text())
                 self.assertEqual(len(data['questions']), 30)
+                self.assertEqual([q['source_ordinal'] for q in data['questions']], list(range(1, 31)))
+                self.assertEqual(data['source'], '')
                 for q in data['questions']:
                     self.assertIs(q['portal_completed'], True)
                     self.assertIs(q['training_enabled'], False)
                     self.assertEqual(sum(a.get('correct') is True for a in q['answers']), 1)
-                    self.assertTrue((path.parent / q['local_image']).is_file())
+                    if q['local_image']:
+                        self.assertTrue((path.parent / q['local_image']).is_file())
                     for image in q['help_images']:
                         self.assertTrue((path.parent / image).is_file())
+                if 'portal_result' in data:
+                    self.assertEqual(data['portal_result'], {'correct': 30, 'wrong': 0, 'unanswered': 0})
+                    for q in data['questions']:
+                        self.assertTrue(next(a for a in q['answers'] if a['letter'] == q['selected_letter'])['correct'])
 
             path = captures[0]
             data = json.loads(path.read_text())
